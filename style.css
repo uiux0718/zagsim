@@ -1,0 +1,29 @@
+/* 잔디 기본 상태 */
+.cell {
+  aspect-ratio: 1;
+  background: #333;
+  border-radius: 4px;
+  transition: transform 0.2s ease;
+}
+
+/* 데이터가 있는 잔디에 애니메이션 적용 */
+.cell.active-grass {
+  animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* 마우스를 올리거나 터치했을 때 살짝 커지는 효과 (Interactive) */
+.cell:active {
+  transform: scale(1.2);
+  z-index: 10;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0);
+    filter: brightness(2); /* 처음 나타날 때 살짝 반짝임 */
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}

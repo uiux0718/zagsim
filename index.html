@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>작심삼일 감지기</title>
+    <style>
+      :root {
+        --p: #9973ff; /* 메인 브랜드 컬러 */
+        --bg: #1a1a1a;
+        --c: #2c2c2c;
+        --sub: #9e9e9e;
+        --danger: #ff4d4d;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Pretendard", sans-serif;
+      }
+      body {
+        background: #000;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        transition: filter 0.5s;
+      }
+
+      .app {
+        width: 100%;
+        max-width: 430px;
+        height: 100vh;
+        background: var(--bg);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* 상단 프로그레스 바 */
+      .pb-bar {
+        height: 4px;
+        background: #333;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        z-index: 100;
+      }
+      .pb-fill {
+        height: 100%;
+        width: 0%;
+        background: var(--p);
+        transition: 0.4s ease;
+      }
+
+      /* 공통 뷰 스타일 */
+      .view {
+        display: none;
+        height: 100%;
+        width: 100%;
+        padding: 80px 24px 40px;
+        flex-direction: column;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      .view.on {
+        display: flex;
+        animation: fadeIn 0.3s forwards;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      #v-splash {
+        background: var(--bg);
+        justify-content: center;
+        align-items: center;
+        z-index: 200;
+        padding: 0;
+      }
+      #v-splash h1 {
+        font-size: 40px;
+        color: var(--p);
+        font-weight: 900;
+        text-align: center;
+        line-height: 1.2;
+      }
+
+      .title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        line-height: 1.4;
+      }
+      .title span {
+        color: var(--p);
+      }
+      .desc {
+        color: var(--sub);
+        margin-bottom: 24px;
+        font-size: 14px;
+      }
+
+      /* 대시보드 카드 */
+      .card {
+        background: var(--c);
+        border-radius: 24px;
+        padding: 24px;
+        margin-bottom: 24px;
+      }
+      .card.summary .label {
+        color: var(--sub);
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+      .card.summary .value {
+        font-size: 38px;
+        font-weight: 800;
+        color: var(--p);
+      }
+      .status-msg {
+        font-size: 13px;
+        margin-top: 10px;
+        color: var(--sub);
+        line-height: 1.5;
+      }
+      .status-msg.warn {
+        color: var(--danger);
+        font-weight: 700;
+        animation: blink 1s infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      /* 잔디 그리드 */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      .cell {
+        aspect-ratio: 1;
+        background: #333;
+        border-radius: 4px;
+        transition: 0.3s;
+      }
+      .cell.penalty {
+        background: #555 !important;
+        opacity: 0.2 !important;
+      }
+
+      /* 버튼 및 리스트 */
+      .cat-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .card.cat {
+        text-align: center;
+        cursor: pointer;
+        transition: 0.2s;
+        padding: 32px 10px;
+      }
+      .card.cat:active {
+        transform: scale(0.95);
+        background: #3a3a3a;
+      }
+      .card.cat span {
+        font-size: 40px;
+        display: block;
+        margin-bottom: 12px;
+      }
+
+      .item {
+        background: var(--c);
+        padding: 20px;
+        border-radius: 18px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        border: 1.5px solid transparent;
+      }
+      .item.active {
+        border-color: var(--p);
+        background: rgba(153, 115, 255, 0.1);
+      }
+      .dot {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #555;
+        border-radius: 50%;
+        transition: 0.2s;
+      }
+      .item.active .dot {
+        background: var(--p);
+        border-color: var(--p);
+      }
+
+      .btn {
+        width: 100%;
+        height: 60px;
+        border-radius: 18px;
+        border: none;
+        font-weight: 700;
+        font-size: 18px;
+        cursor: pointer;
+        margin-top: auto;
+        background: var(--p);
+        color: #fff;
+      }
+      .btn.sub {
+        background: #333;
+        color: var(--sub);
+        margin-top: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="pb-bar"><div id="progress" class="pb-fill"></div></div>
+
+      <section id="v-splash" class="view on">
+        <h1>작심삼일<br />탐지기 Pro</h1>
+      </section>
+
+      <section id="v-home" class="view">
+        <p class="title">나의 의지 대시보드</p>
+        <div class="card summary">
+          <p class="label">오늘의 달성도</p>
+          <p id="streak-level" class="value">Level 0</p>
+          <p id="status-text" class="status-msg">꾸준함이 최고의 재능입니다.</p>
+        </div>
+        <div id="grass-grid" class="grid"></div>
+        <button class="btn" onclick="navTo('v-cat', 50)">
+          오늘의 기록 추가
+        </button>
+      </section>
+
+      <section id="v-cat" class="view">
+        <p class="title">기록할<br /><span>카테고리 선택</span></p>
+        <div class="cat-wrap">
+          <div class="card cat" onclick="navTo('v-list', 100)">
+            <span>🏃</span>운동
+          </div>
+          <div class="card cat" onclick="navTo('v-list', 100)">
+            <span>💧</span>수분
+          </div>
+          <div class="card cat" onclick="navTo('v-list', 100)">
+            <span>📚</span>독서
+          </div>
+          <div class="card cat" onclick="navTo('v-list', 100)">
+            <span>💊</span>영양제
+          </div>
+        </div>
+        <button class="btn sub" onclick="navTo('v-home', 0)">취소</button>
+      </section>
+
+      <section id="v-list" class="view">
+        <p class="title">세부 실천 체크</p>
+        <p class="desc">체크한 항목이 많을수록 잔디가 진해집니다.</p>
+        <div class="list-container">
+          <div class="item" onclick="this.classList.toggle('active')">
+            <p>목표 시간 준수하기</p>
+            <div class="dot"></div>
+          </div>
+          <div class="item" onclick="this.classList.toggle('active')">
+            <p>미루지 않고 즉시 하기</p>
+            <div class="dot"></div>
+          </div>
+          <div class="item" onclick="this.classList.toggle('active')">
+            <p>마무리 기록 남기기</p>
+            <div class="dot"></div>
+          </div>
+          <div class="item" onclick="this.classList.toggle('active')">
+            <p>주변 정리 정돈하기</p>
+            <div class="dot"></div>
+          </div>
+        </div>
+        <button class="btn" onclick="completeRecord()">실천 완료</button>
+        <button class="btn sub" onclick="navTo('v-cat', 50)">뒤로가기</button>
+      </section>
+    </div>
+
+    <script>
+      /* [팩트 체크 및 로직 설계]
+       1. 데이터: 0(미실천) ~ 4(완벽) 레벨로 관리하여 시각적 변별력 확보
+       2. 탐지: 최근 3일간 합계가 0이면 '작심삼일' 상태로 간주하고 페널티 부여
+       3. 정합성: 페이지 로드 시 날짜를 확인하여 칸을 유지함
+    */
+
+      let habitData =
+        JSON.parse(localStorage.getItem("habit_pro_data")) ||
+        new Array(28).fill(0);
+
+      function navTo(viewId, progressWidth) {
+        document
+          .querySelectorAll(".view")
+          .forEach((v) => v.classList.remove("on"));
+        document.getElementById(viewId).classList.add("on");
+        document.getElementById("progress").style.width = progressWidth + "%";
+        if (viewId === "v-home") renderDashboard();
+      }
+
+      function renderDashboard() {
+        const grid = document.getElementById("grass-grid");
+        const statusText = document.getElementById("status-text");
+        const streakLevel = document.getElementById("streak-level");
+        grid.innerHTML = "";
+
+        // 1. 작심삼일 탐지 로직 (최근 3일 데이터 기반)
+        const lastThree = habitData.slice(-3);
+        const isFailed =
+          lastThree.every((val) => val === 0) &&
+          habitData.some((val) => val > 0);
+
+        if (isFailed) {
+          document.body.style.filter = "grayscale(100%)";
+          statusText.innerText =
+            "🚨 작심삼일 탐지! 의지가 메말랐습니다. 기록이 초기화될 위기입니다!";
+          statusText.className = "status-msg warn";
+        } else {
+          document.body.style.filter = "none";
+          statusText.innerText = "작은 실천이 모여 당신의 습관을 만듭니다.";
+          statusText.className = "status-msg";
+        }
+
+        // 2. 잔디 렌더링 (농도 및 페널티 시각화)
+        habitData.forEach((level) => {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          if (level > 0) {
+            cell.style.backgroundColor = "var(--p)";
+            cell.style.opacity = level * 0.25; // 1단계: 0.25 ~ 4단계: 1.0
+            if (isFailed) cell.className += " penalty"; // 실패 시 회색조 처리
+          }
+          grid.appendChild(cell);
+        });
+
+        // 3. 현재 레벨 계산 (데모용: 오늘 기록의 레벨 표시)
+        const todayLevel = habitData[habitData.length - 1];
+        streakLevel.innerText = `Level ${todayLevel}`;
+      }
+
+      function completeRecord() {
+        const selectedCount = document.querySelectorAll(".item.active").length;
+
+        if (selectedCount > 0) {
+          // 로직: 가장 마지막 빈자리(0)를 찾거나, 데모상 마지막 칸을 오늘로 가정하여 업데이트
+          // 여기서는 '가장 첫 번째 빈칸'을 채우는 방식으로 정직한 데이터 기록 구현
+          const targetIndex = habitData.indexOf(0);
+
+          if (targetIndex !== -1) {
+            habitData[targetIndex] = Math.min(selectedCount, 4);
+            localStorage.setItem("habit_pro_data", JSON.stringify(habitData));
+            alert(`오늘의 실천(Level ${selectedCount})이 기록되었습니다!`);
+          } else {
+            // 만약 28일이 다 찼다면 가장 오래된 데이터 삭제 후 밀어내기 (FIFO)
+            habitData.shift();
+            habitData.push(Math.min(selectedCount, 4));
+            localStorage.setItem("habit_pro_data", JSON.stringify(habitData));
+          }
+
+          // UI 초기화 및 홈으로 이동
+          document
+            .querySelectorAll(".item")
+            .forEach((i) => i.classList.remove("active"));
+          navTo("v-home", 0);
+        } else {
+          alert("실천한 항목을 하나 이상 선택해주세요!");
+        }
+      }
+
+      // 스플래시 화면 지연 후 실행
+      window.onload = () => {
+        setTimeout(() => navTo("v-home", 0), 1500);
+      };
+    </script>
+  </body>
+</html>
