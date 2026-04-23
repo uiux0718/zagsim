@@ -1,41 +1,65 @@
-// 기존 renderGrass 내부 로직 수정
-function getStreak(data) {
-  let streak = 0;
-  // 배열의 끝(오늘)부터 역순으로 확인
-  for (let i = data.length - 1; i >= 0; i--) {
-    if (data[i]) streak++;
-    else break; // 중간에 실패가 있으면 멈춤
-  }
-  return streak;
+// --- 수정된 Script 부분 ---
+const STORAGE_KEY = "JAKSIM_DATA";
+
+// 데이터 불러오기 또는 초기화
+let userData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+    streak: 0,
+    bestStreak: 0,
+    failCount: 0,
+    totalReports: 0,
+    isCorrupted: false,
+};
+
+function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
 }
 
-// renderGrass 함수 내 적용
-const currentStreak = getStreak(habitData);
-document.getElementById("streak-count").innerText = `${currentStreak}일째`;
-// 28일치 빈 데이터 생성 (실제 앱이라면 날짜 키값을 사용하는 것이 안전함)
-if (!localStorage.getItem("habit_records")) {
-  const initialData = Array.from({ length: 28 }, () => false);
-  localStorage.setItem("habit_records", JSON.stringify(initialData));
-  habitData = initialData;
-}
-function renderDashboard() {
-  const grid = document.getElementById("grass-grid");
-  grid.innerHTML = "";
+function nav(id, el) {
+    document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+    const target = document.getElementById(id);
+    target.classList.add("active");
+    
+    // 화면 전환 시 최상단 이동
+    target.scrollTop = 0;
 
-  habitData.forEach((level, index) => {
-    const cell = document.createElement("div");
-    cell.className = "cell";
+    const tabs = document.getElementById("bottom-tabs");
+    if (["v-main", "v-mypage"].includes(id)) tabs.style.display = "flex";
+    else tabs.style.display = "none";
 
-    if (level > 0) {
-      cell.classList.add("active-grass");
-      cell.style.backgroundColor = "var(--p)";
-      cell.style.opacity = level * 0.25;
-
-      // 순차적 등장 효과: 인덱스에 따라 지연 시간 부여
-      cell.style.animationDelay = `${index * 0.02}s`;
-
-      if (isDeserted) cell.classList.add("penalty");
+    if (el && el.classList.contains("tab-item")) {
+        document.querySelectorAll(".tab-item").forEach((t) => t.classList.remove("active"));
+        el.classList.add("active");
     }
-    grid.appendChild(cell);
-  });
+    updateUI();
 }
+
+function saveRecord() {
+    const input = document.getElementById("report-input");
+    if (!input.value.trim()) return alert("요원, 보고 내용을 누락했습니다.");
+
+    userData.streak++;
+    userData.totalReports++;
+    if (userData.streak > userData.bestStreak) userData.bestStreak = userData.streak;
+    userData.isCorrupted = false;
+
+    saveData(); // 데이터 저장
+    input.value = "";
+    showPush(`보고 승인. ${userData.streak}일 연속 임무 수행 중.`);
+    nav("v-main");
+}
+
+function triggerFailure() {
+    // 냉정한 논리에 근거한 확인 절차 추가
+    if (!confirm("정말로 임무를 포기하시겠습니까? 모든 스트릭이 파괴됩니다.")) return;
+
+    userData.streak = 0;
+    userData.failCount++;
+    userData.isCorrupted = true;
+    
+    saveData(); // 데이터 저장
+    showPush("경고! 시스템 오염 발생. 생체 신호 불안정.");
+    nav("v-mypage");
+}
+
+// 페이지 로드 시 UI 업데이트
+window.onload = updateUI;
