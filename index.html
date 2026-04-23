@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!doctype html>
 <html lang="ko">
   <head>
@@ -568,3 +569,989 @@
     </script>
   </body>
 </html>
+=======
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>작심삼일 감지기 (Willpower Detector)</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+    <style>
+      :root {
+        --primary: #7c6dff; /* 메인 퍼플 */
+        --bg: #ffffff;
+        --text-main: #000000;
+        --text-sub: #8e8e93;
+        --line: #e5e5ea;
+        --accent-yellow: #ffd600;
+        --accent-red: #ff3b30; /* 미기록/위험 알림용 */
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Pretendard", sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background-color: #f2f2f7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        color: var(--text-main);
+      }
+
+      /* 기기 프레임 */
+      .phone-frame {
+        width: 375px;
+        height: 812px;
+        background: var(--bg);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        border-radius: 40px; /* PC 뷰용 */
+        border: 12px solid #333; /* PC 뷰용 베젤 */
+      }
+
+      /* 뷰 제어 */
+      .view {
+        display: none;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        padding: 40px 24px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: white;
+        overflow-y: auto;
+      }
+      .view.active {
+        display: flex;
+        animation: fadeIn 0.3s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* 공통 스타일 */
+      .btn-primary {
+        width: 100%;
+        padding: 18px;
+        background: var(--primary);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: 0.2s;
+      }
+      .btn-primary:active {
+        opacity: 0.8;
+        transform: scale(0.98);
+      }
+      .input-underline {
+        width: 100%;
+        padding: 15px 0;
+        border: none;
+        border-bottom: 1px solid var(--line);
+        font-size: 16px;
+        outline: none;
+        margin-bottom: 15px;
+      }
+      .header-back {
+        font-size: 24px;
+        cursor: pointer;
+        margin-bottom: 20px;
+        display: block;
+        font-weight: 400;
+      }
+      .radio-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 15px;
+        color: var(--text-main);
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+
+      /* --- 1. 스플래시 --- */
+      #v-splash {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background: #fafafa;
+      }
+      .logo-radar {
+        width: 140px;
+        height: 140px;
+        border: 2px solid #ebebff;
+        border-radius: 50%;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 30px;
+      }
+      .logo-radar::after {
+        content: "3";
+        position: absolute;
+        right: 15px;
+        top: 35px;
+        color: var(--accent-yellow);
+        font-weight: 900;
+        font-size: 32px;
+      }
+      .brand-name {
+        font-size: 30px;
+        font-weight: 800;
+      }
+      .brand-name span {
+        color: var(--primary);
+      }
+
+      /* --- 2. 로그인 --- */
+      .social-login-group {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin: 40px 0;
+      }
+      .circle-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        border: 1px solid var(--line);
+        cursor: pointer;
+      }
+      .sub-links {
+        text-align: center;
+        margin-top: 25px;
+        color: var(--text-sub);
+        font-size: 14px;
+      }
+      .sub-links span {
+        margin: 0 10px;
+        cursor: pointer;
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      /* --- 3. 홈 (기록화면) --- */
+      .streak-card {
+        background: #f8f7ff;
+        border-radius: 20px;
+        padding: 24px;
+        margin: 20px 0;
+        text-align: center;
+        border: 1px solid #ebebff;
+        box-shadow: 0 4px 12px rgba(124, 109, 255, 0.05);
+      }
+      .streak-number {
+        font-size: 48px;
+        font-weight: 900;
+        color: var(--primary);
+        margin: 10px 0;
+      }
+
+      /* [구조적 특징 구현: 미기록 감지 알림] */
+      #home-detect-alert {
+        display: none;
+        background: #fff5f5;
+        border: 1px solid #ffdede;
+        color: var(--accent-red);
+        border-radius: 12px;
+        padding: 15px;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      /* --- 4. 기록하기 --- */
+      .task-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px;
+        background: #fafafa;
+        border-radius: 16px;
+        margin-bottom: 10px;
+        border: 1px solid transparent;
+        cursor: pointer;
+      }
+      .task-item.selected {
+        border-color: var(--primary);
+        background: #f8f7ff;
+      }
+      .task-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .task-icon {
+        font-size: 22px;
+      }
+      .checkbox {
+        width: 22px;
+        height: 22px;
+        border: 2px solid var(--line);
+        border-radius: 4px;
+        position: relative;
+      }
+      .task-item.selected .checkbox {
+        background: #5e5e5e;
+        border-color: #5e5e5e;
+      }
+      .task-item.selected .checkbox::after {
+        content: "✓";
+        color: white;
+        position: absolute;
+        left: 3px;
+        top: -3px;
+        font-size: 16px;
+      }
+
+      /* --- 5. 마이페이지 --- */
+      .profile-section {
+        text-align: center;
+        padding: 30px 0;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 20px;
+      }
+      .profile-img {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        border: 2px solid var(--primary);
+        margin: 0 auto 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        background: #f9f9f9;
+      }
+      .stat-group {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 25px;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .stat-item {
+        flex: 1;
+        cursor: pointer;
+      }
+      .stat-icon {
+        font-size: 22px;
+        margin-bottom: 5px;
+      }
+
+      /* [그동안의 기록 구조 구현: 노란 배경 통계] */
+      .record-summary-box {
+        background: var(--accent-yellow);
+        border-radius: 16px;
+        padding: 20px;
+        color: var(--text-main);
+        margin-bottom: 20px;
+      }
+      .summary-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 15px;
+      }
+      .summary-item {
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .summary-item span.status {
+        color: var(--primary);
+        font-weight: 800;
+      }
+      .summary-item span.status.missed {
+        color: var(--accent-red);
+      }
+
+      .menu-list {
+        list-style: none;
+      }
+      .menu-item {
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        font-size: 15px;
+      }
+      .menu-item .arrow {
+        color: var(--text-sub);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="phone-frame">
+      <section id="v-splash" class="view active">
+        <div class="logo-radar">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle
+              cx="50"
+              cy="50"
+              r="40"
+              stroke="#7C6DFF"
+              stroke-width="1"
+              fill="none"
+              opacity="0.3"
+            />
+            <circle
+              cx="50"
+              cy="50"
+              r="25"
+              stroke="#7C6DFF"
+              stroke-width="1"
+              fill="none"
+              opacity="0.5"
+            />
+            <line
+              x1="50"
+              y1="50"
+              x2="80"
+              y2="20"
+              stroke="#7C6DFF"
+              stroke-width="2"
+            />
+          </svg>
+        </div>
+        <h1 class="brand-name"><span>작심삼일</span> 감지기</h1>
+      </section>
+
+      <section id="v-login-main" class="view">
+        <div
+          class="logo-radar"
+          style="margin: 60px auto 20px; width: 100px; height: 100px"
+        >
+          <svg width="70" height="70" viewBox="0 0 100 100">
+            <circle
+              cx="50"
+              cy="50"
+              r="40"
+              stroke="#7C6DFF"
+              stroke-width="2"
+              fill="none"
+            />
+          </svg>
+        </div>
+        <h1
+          class="brand-name"
+          style="text-align: center; margin-bottom: 50px; font-size: 26px"
+        >
+          작심삼일 <span>감지기</span>
+        </h1>
+
+        <div class="social-login-group">
+          <div
+            class="circle-btn"
+            style="background: #fee500; border: none; color: #3a1d1d"
+          >
+            K
+          </div>
+          <div
+            class="circle-btn"
+            style="background: #03c75a; color: white; border: none"
+          >
+            N
+          </div>
+          <div
+            class="circle-btn"
+            style="background: #1877f2; color: white; border: none"
+          >
+            f
+          </div>
+          <div
+            class="circle-btn"
+            style="background: #000; color: white; border: none"
+          >
+            A
+          </div>
+          <div
+            class="circle-btn"
+            style="background: #ea4335; color: white; border: none"
+          >
+            G
+          </div>
+        </div>
+
+        <button
+          class="btn-primary"
+          style="
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            margin-top: 0;
+          "
+          onclick="go('v-login-form')"
+        >
+          이메일 로그인
+        </button>
+
+        <div class="sub-links">
+          <span onclick="go('v-signup-1')">회원가입</span> |
+          <span>비밀번호 찾기</span>
+        </div>
+      </section>
+
+      <section id="v-login-form" class="view">
+        <span class="header-back" onclick="go('v-login-main')"
+          >〈 이메일 로그인</span
+        >
+        <input
+          type="text"
+          class="input-underline"
+          placeholder="이메일"
+          id="login-email"
+        />
+        <input
+          type="password"
+          class="input-underline"
+          placeholder="비밀번호"
+          id="login-pw"
+        />
+        <button class="btn-primary" onclick="handleLogin()">로그인</button>
+        <div class="sub-links" style="color: var(--text-sub)">
+          아이디 찾기 | 비밀번호 찾기
+        </div>
+      </section>
+
+      <section id="v-signup-1" class="view">
+        <span class="header-back" onclick="go('v-login-main')"
+          >〈 회원가입</span
+        >
+        <p style="margin-bottom: 25px; font-size: 15px; line-height: 1.6">
+          <b>작심삼일 탐지기</b>를 통해 일상에<br />꾸준한 습관이
+          만들어지도록<br />우리 함께해요.
+        </p>
+
+        <input type="text" class="input-underline" placeholder="이름" />
+        <div style="position: relative">
+          <input type="email" class="input-underline" placeholder="이메일" />
+          <button
+            style="
+              position: absolute;
+              right: 0;
+              top: 10px;
+              background: var(--primary);
+              color: white;
+              border: none;
+              padding: 5px 10px;
+              border-radius: 4px;
+              font-size: 12px;
+            "
+          >
+            중복확인
+          </button>
+        </div>
+        <input
+          type="password"
+          class="input-underline"
+          placeholder="비밀번호 (영문+숫자+특수문자 10자 이상)"
+        />
+        <input
+          type="text"
+          class="input-underline"
+          placeholder="출생년도 (ex.1994)"
+        />
+
+        <div style="margin-top: 20px">
+          <label class="radio-label"
+            ><input type="checkbox" />
+            <span>서비스 이용약관 전체 동의</span></label
+          >
+        </div>
+        <button class="btn-primary" onclick="go('v-signup-2')">다음</button>
+      </section>
+
+      <section id="v-signup-2" class="view">
+        <span class="header-back" onclick="go('v-signup-1')"
+          >〈 회원가입 완료</span
+        >
+        <p style="margin-bottom: 30px; font-size: 15px">
+          <span style="color: var(--primary); font-weight: 700">작심삼일</span>
+          이제 끝내세요.<br />당신의 끈기를 데이터로 증명하세요.
+        </p>
+
+        <div style="margin-bottom: 20px">
+          <p
+            style="font-size: 14px; color: var(--text-sub); margin-bottom: 10px"
+          >
+            성별
+          </p>
+          <div style="display: flex; gap: 20px">
+            <label class="radio-label"
+              ><input type="radio" name="gender" /> <span>여성</span></label
+            >
+            <label class="radio-label"
+              ><input type="radio" name="gender" /> <span>남성</span></label
+            >
+          </div>
+        </div>
+        <div style="margin-bottom: 20px">
+          <p
+            style="font-size: 14px; color: var(--text-sub); margin-bottom: 10px"
+          >
+            커플 여부
+          </p>
+          <div style="display: flex; gap: 20px">
+            <label class="radio-label"
+              ><input type="radio" name="couple" /> <span>싱글</span></label
+            >
+            <label class="radio-label"
+              ><input type="radio" name="couple" /> <span>커플</span></label
+            >
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="go('v-home')">
+          가입 완료 및 로그인
+        </button>
+      </section>
+
+      <section id="v-home" class="view">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h2 id="home-date" style="font-size: 16px; color: var(--text-sub)">
+            2026.04.22
+          </h2>
+          <span
+            style="cursor: pointer; font-size: 20px"
+            onclick="go('v-mypage')"
+            >👤</span
+          >
+        </div>
+        <h1 style="margin-top: 10px; font-size: 26px; font-weight: 800">
+          의지 충전 중 🔥
+        </h1>
+
+        <div id="home-detect-alert">
+          ⚠️ 2일간 기록이 없어요! 작심삼일 위험 감지!
+        </div>
+
+        <div class="streak-card">
+          <p style="color: var(--text-sub); font-size: 14px">
+            나의 Streak 상태
+          </p>
+          <div class="streak-number" id="home-streak-count">0 Days</div>
+          <p style="font-size: 13px; color: var(--primary)">
+            꾸준함이 쌓이고 있어요!
+          </p>
+        </div>
+
+        <div style="margin-top: auto">
+          <p
+            style="
+              text-align: center;
+              color: var(--text-sub);
+              margin-bottom: 15px;
+              font-size: 14px;
+            "
+          >
+            오늘의 행동을 기록하여 의지를 증명하세요.
+          </p>
+          <button class="btn-primary" onclick="go('v-write')">
+            기록하기 +
+          </button>
+        </div>
+      </section>
+
+      <section id="v-write" class="view">
+        <span class="header-back" onclick="go('v-home')"
+          >〈 오늘 뭐했지? by 작심삼일</span
+        >
+
+        <div class="task-item" onclick="toggleTask(this)">
+          <div class="task-info">
+            <span class="task-icon">🧘</span> <span>아침 10분 스트레칭</span>
+          </div>
+          <div class="checkbox"></div>
+        </div>
+        <div class="task-item" onclick="toggleTask(this)">
+          <div class="task-info">
+            <span class="task-icon">🥛</span> <span>물 2L 마시기</span>
+          </div>
+          <div class="checkbox"></div>
+        </div>
+        <div class="task-item" onclick="toggleTask(this)">
+          <div class="task-info">
+            <span class="task-icon">👟</span> <span>10분 산책</span>
+          </div>
+          <div class="checkbox"></div>
+        </div>
+        <div class="task-item" onclick="toggleTask(this)">
+          <div class="task-info">
+            <span class="task-icon">📖</span> <span>공부하기</span>
+          </div>
+          <div class="checkbox"></div>
+        </div>
+
+        <button
+          class="btn-primary"
+          id="btn-record-complete"
+          onclick="saveRecord()"
+        >
+          기록 완료
+        </button>
+      </section>
+
+      <section id="v-mypage" class="view">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+          "
+        >
+          <h2 style="font-size: 18px; font-weight: 800">나의 기록</h2>
+          <span
+            class="back-btn"
+            style="cursor: pointer; color: var(--text-sub)"
+            onclick="go('v-home')"
+            >닫기</span
+          >
+        </div>
+
+        <div
+          class="profile-section"
+          style="padding: 15px 0; border: none; margin: 0"
+        >
+          <div class="profile-img">👤</div>
+          <h3 style="font-size: 18px">YEDI 〉</h3>
+          <p style="color: var(--text-sub); font-size: 13px">user@naver.com</p>
+        </div>
+
+        <div class="record-summary-box">
+          <div class="summary-header">Summary</div>
+          <div class="summary-item">
+            <span>총 기록 일수</span> <span id="my-total-records">12일</span>
+          </div>
+          <div class="summary-item">
+            <span>현재 연속 기록</span>
+            <span class="status" id="my-streak-count">3일</span>
+          </div>
+          <div class="summary-item">
+            <span>최근 3일 상태</span>
+            <span class="status missed" id="my-recent-status"
+              >감지 불가 (미기록)</span
+            >
+          </div>
+        </div>
+
+        <div class="stat-group">
+          <div class="stat-item">
+            📝
+            <div class="stat-label">기록 리스트</div>
+          </div>
+          <div class="stat-item">
+            👥
+            <div class="stat-label">습관 관리</div>
+          </div>
+          <div class="stat-item" onclick="go('v-app-setting')">
+            ⚙️
+            <div class="stat-label">설정</div>
+          </div>
+          <div class="stat-item" onclick="go('v-login-main')">
+            🚪
+            <div class="stat-label">로그아웃</div>
+          </div>
+        </div>
+
+        <ul class="menu-list">
+          <li class="menu-item">고객센터 <span class="arrow">〉</span></li>
+          <li class="menu-item">약관 확인 <span class="arrow">〉</span></li>
+        </ul>
+      </section>
+
+      <section id="v-app-setting" class="view">
+        <span class="header-back" onclick="go('v-mypage')">〈 APP 설정</span>
+
+        <div
+          style="
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <span>푸시 설정 ON</span>
+          <span class="arrow">〉</span>
+        </div>
+        <p
+          style="
+            color: var(--text-sub);
+            font-size: 12px;
+            margin-bottom: 20px;
+            padding: 0 5px;
+          "
+        >
+          푸시 알림에 대한 설정은 '휴대폰 설정>작심삼일 탐지기>알람'에서 변경할
+          수 있습니다.
+        </p>
+
+        <div
+          style="
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <span>알림 설정</span>
+          <div
+            style="
+              width: 50px;
+              height: 26px;
+              background: var(--primary);
+              border-radius: 13px;
+              position: relative;
+              color: white;
+              font-size: 11px;
+              font-weight: 700;
+              display: flex;
+              align-items: center;
+              justify-content: flex-start;
+              padding-left: 8px;
+            "
+          >
+            ON
+            <div
+              style="
+                width: 20px;
+                height: 20px;
+                background: white;
+                border-radius: 50%;
+                position: absolute;
+                right: 3px;
+                top: 3px;
+              "
+            ></div>
+          </div>
+        </div>
+
+        <div
+          style="
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 10px;
+            "
+          >
+            <span>감지 기준 설정 〉</span>
+            <div style="display: flex; gap: 5px">
+              <span
+                style="
+                  border: 1px solid var(--primary);
+                  color: var(--primary);
+                  padding: 3px 8px;
+                  border-radius: 4px;
+                  font-size: 12px;
+                "
+                >2일</span
+              >
+              <span
+                style="
+                  background: var(--primary);
+                  color: white;
+                  padding: 3px 8px;
+                  border-radius: 4px;
+                  font-size: 12px;
+                "
+                >3일</span
+              >
+            </div>
+          </div>
+          <p style="color: var(--text-sub); font-size: 12px">
+            며칠 동안 기록이 없으면 경고 알림을 보낼지 선택하세요.
+          </p>
+        </div>
+
+        <ul class="menu-list">
+          <li class="menu-item">
+            오픈 소스 라이선스 <span class="arrow">〉</span>
+          </li>
+          <li class="menu-item" style="border: none">
+            현재 버전 v4.8.2
+            <span style="font-size: 12px; color: var(--text-sub)"
+              >최신 버전입니다.</span
+            >
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <script>
+      // --- 상태 관리 변수 (임시 DB 역할) ---
+      let appState = {
+        isLoggedIn: false,
+        user: { name: "YEDI", email: "user@naver.com" },
+        streak: 0, // 연속 기록 일수
+        totalRecords: 12, // 총 기록 일수 (임시 데이터)
+        hasRecordToday: false, // 오늘 기록 여부
+        daysSinceLastRecord: 2, // 마지막 기록 후 경과일 (감지 시뮬레이션용)
+      };
+
+      // --- 화면 전환 함수 (SPA) ---
+      function go(id) {
+        // 모든 뷰 비활성화
+        document
+          .querySelectorAll(".view")
+          .forEach((v) => v.classList.remove("active"));
+        // 대상 뷰 활성화
+        const target = document.getElementById(id);
+        if (target) {
+          target.classList.add("active");
+          target.scrollTop = 0; // 스크롤 초기화
+
+          // 특정 화면 진입 시 업데이트 로직
+          if (id === "v-home") updateHomeUI();
+          if (id === "v-mypage") updateMyPageUI();
+        }
+      }
+
+      // --- 4. 기록 하기 로직 ---
+      // 습관 아이템 선택 토글
+      function toggleTask(elem) {
+        elem.classList.toggle("selected");
+      }
+
+      // 기록 완료 및 저장 (데이터 복귀 구조)
+      function saveRecord() {
+        const selectedTasks = document.querySelectorAll(".task-item.selected");
+
+        if (selectedTasks.length === 0) {
+          alert("오늘 실천한 습관을 하나 이상 선택해주세요.");
+          return;
+        }
+
+        // [구조: 복귀 - 행동 발생] 데이터 업데이트
+        appState.streak++; // Streak 증가
+        appState.totalRecords++;
+        appState.hasRecordToday = true;
+        appState.daysSinceLastRecord = 0; // 경과일 초기화 (안전 상태)
+
+        alert(
+          "오늘의 의지가 기록되었습니다! Streak " +
+            appState.streak +
+            "일 달성!",
+        );
+        go("v-mypage"); // 저장 후 마이페이지로 이동
+      }
+
+      // --- 데이터 동적 반영 UI 업데이트 ---
+      // 홈 화면 업데이트 (날짜, Streak, 감지 알림)
+      function updateHomeUI() {
+        // 날짜 설정
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, "0")}.${String(now.getDate()).padStart(2, "0")}`;
+        document.getElementById("home-date").innerText = dateStr;
+
+        // Streak 표시
+        document.getElementById("home-streak-count").innerText =
+          appState.streak + " Days";
+
+        // [구조: 감지/개입 - 위험 신호 알림]
+        const alertBox = document.getElementById("home-detect-alert");
+        if (!appState.hasRecordToday && appState.daysSinceLastRecord >= 2) {
+          // 오늘 기록 안했고, 마지막 기록 후 2일 이상 지났을 때
+          alertBox.style.display = "block";
+          alertBox.innerText = `⚠️ ${appState.daysSinceLastRecord}일간 기록이 없어요! 작심삼일 위험 감지!`;
+        } else {
+          alertBox.style.display = "none";
+        }
+      }
+
+      // 마이페이지 업데이트 (그동안의 기록 통계 반영)
+      function updateMyPageUI() {
+        document.getElementById("my-total-records").innerText =
+          appState.totalRecords + "일";
+        document.getElementById("my-streak-count").innerText =
+          appState.streak + "일";
+
+        const recentStatus = document.getElementById("my-recent-status");
+        if (appState.daysSinceLastRecord === 0) {
+          recentStatus.innerText = "의지 충전 완료 (안전)";
+          recentStatus.classList.remove("missed");
+        } else {
+          recentStatus.innerText = `감지 중 (${appState.daysSinceLastRecord}일 미기록)`;
+          recentStatus.classList.add("missed");
+        }
+      }
+
+      // 임시 로그인 처리
+      function handleLogin() {
+        const email = document.getElementById("login-email").value;
+        if (email.includes("@")) {
+          appState.isLoggedIn = true;
+          go("v-home");
+        } else {
+          alert("올바른 이메일 형식을 입력해주세요.");
+        }
+      }
+
+      // --- 초기 실행 (스플래시) ---
+      window.onload = () => {
+        // 시뮬레이션을 위해 초기 Streak을 3으로 설정 (감지 로직 테스트용)
+        appState.streak = 3;
+
+        setTimeout(() => {
+          go("v-login-main");
+        }, 2000); // 2초 후 로그인 화면으로 이동
+      };
+    </script>
+  </body>
+</html>
+>>>>>>> f2cb61e0705094db931ffe27a6b366af9d55ebdb

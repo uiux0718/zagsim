@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>작심삼일 탐지기 - Full Prototype</title>
+    <style>
+      :root {
+        --p: #7c6dff; /* 메인 퍼플 */
+        --p-light: #f1f0ff;
+        --y: #ffd233; /* 포인트 옐로우 */
+        --bg: #ffffff;
+        --gray-f: #f8f9fa;
+        --gray-e: #eeeeee;
+        --text: #1a1a1a;
+        --sub: #8e8e93;
+        --shadow: 0 10px 30px rgba(124, 109, 255, 0.08);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family:
+          "Pretendard",
+          -apple-system,
+          sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background-color: #e9ecef;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      /* iPhone Frame */
+      .iphone {
+        width: 375px;
+        height: 812px;
+        background: var(--bg);
+        border-radius: 44px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* View Layout */
+      .view {
+        display: none;
+        height: 100%;
+        width: 100%;
+        padding: 70px 24px 40px;
+        flex-direction: column;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      .view.active {
+        display: flex;
+        animation: viewFade 0.4s ease-out;
+      }
+      @keyframes viewFade {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* [1. Splash] */
+      #view-splash {
+        justify-content: center;
+        align-items: center;
+        background: #fff;
+        z-index: 100;
+      }
+      .splash-logo {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 24px;
+        animation: float 2.5s infinite ease-in-out;
+      }
+      .splash-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .splash-title {
+        font-size: 26px;
+        font-weight: 900;
+        color: var(--p);
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-12px);
+        }
+      }
+
+      /* [2. Entry & Social] */
+      .entry-header {
+        margin-top: 40px;
+      }
+      .social-group {
+        margin-top: 60px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .social-btn {
+        width: 100%;
+        padding: 18px;
+        border-radius: 14px;
+        text-align: center;
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid transparent;
+      }
+      .social-btn.kakao {
+        background: #fee500;
+        color: #3c1e1e;
+      }
+      .social-btn.email {
+        background: var(--gray-f);
+        color: var(--text);
+        border-color: var(--gray-e);
+      }
+
+      /* [3. Signup Form] */
+      .form-group {
+        margin-top: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+      .line-input {
+        border: none;
+        border-bottom: 2px solid var(--gray-e);
+        padding: 12px 0;
+        font-size: 16px;
+        outline: none;
+        transition: 0.3s;
+      }
+      .line-input:focus {
+        border-bottom-color: var(--p);
+      }
+
+      /* [4. Dashboard & Record] */
+      .habit-container {
+        margin-top: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .habit-card {
+        background: #fff;
+        padding: 22px;
+        border-radius: 22px;
+        border: 2.5px solid var(--gray-f);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .habit-card.checked {
+        border-color: var(--p);
+        background: #f8f7ff;
+        box-shadow: var(--shadow);
+      }
+      .habit-card .habit-info {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .habit-card .emoji {
+        font-size: 24px;
+      }
+      .habit-card .name {
+        font-weight: 700;
+        font-size: 16px;
+      }
+      .check-circle {
+        width: 28px;
+        height: 28px;
+        border: 2px solid var(--gray-e);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+      }
+      .habit-card.checked .check-circle {
+        background: var(--p);
+        border-color: var(--p);
+      }
+      .habit-card.checked .check-circle::after {
+        content: "✓";
+        color: white;
+        font-weight: 900;
+      }
+
+      /* [5. Success Feedback] */
+      .success-box {
+        text-align: center;
+        margin-top: 80px;
+      }
+      .success-badge {
+        display: inline-block;
+        padding: 10px 20px;
+        background: var(--p-light);
+        color: var(--p);
+        border-radius: 100px;
+        font-weight: 800;
+        font-size: 14px;
+        margin-top: 24px;
+      }
+
+      /* [6. MyPage & Grass] */
+      .profile-card {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .profile-img {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: #eee;
+        border: 3px solid var(--p);
+        margin: 0 auto 16px;
+      }
+      .grass-area {
+        background: #fffbed;
+        padding: 22px;
+        border-radius: 26px;
+        border: 1px solid #ffedaa;
+        margin-bottom: 20px;
+      }
+      .grass-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+      }
+      .cell {
+        aspect-ratio: 1;
+        background: #e9e9e9;
+        border-radius: 5px;
+        transition: 0.4s;
+      }
+      .cell.active {
+        background: var(--y);
+        border: 1px solid #e6b800;
+      }
+
+      /* Global UI Elements */
+      .btn-bottom {
+        width: 100%;
+        padding: 20px;
+        border: none;
+        border-radius: 18px;
+        background: var(--p);
+        color: white;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: auto;
+      }
+      .btn-bottom:active {
+        transform: scale(0.96);
+      }
+      .purple-txt {
+        color: var(--p);
+      }
+      .sub-txt {
+        color: var(--sub);
+        font-size: 14px;
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="iphone">
+      <section id="view-splash" class="view active">
+        <div class="splash-logo">
+          <img
+            src="logo.png"
+            onerror="
+              this.src =
+                'https://cdn-icons-png.flaticon.com/512/1149/1149168.png'
+            "
+          />
+        </div>
+        <h1 class="splash-title">작심삼일 탐지기</h1>
+      </section>
+
+      <section id="view-entry" class="view">
+        <div class="entry-header">
+          <h2>작심삼일 <span class="purple-txt">감지기</span></h2>
+          <p class="sub-txt">당신의 성실함을 잔디로 증명하세요.</p>
+        </div>
+        <div class="social-group">
+          <div class="social-btn kakao" onclick="go('view-signup')">
+            카카오톡으로 시작하기
+          </div>
+          <div class="social-btn email" onclick="go('view-signup')">
+            이메일로 가입하기
+          </div>
+        </div>
+      </section>
+
+      <section id="view-signup" class="view">
+        <h2>
+          반가워요!<br /><span class="purple-txt">닉네임</span>을 설정해주세요.
+        </h2>
+        <div class="form-group">
+          <input
+            type="text"
+            class="line-input"
+            placeholder="닉네임 (최대 8자)"
+            id="user-nick"
+          />
+          <input type="email" class="line-input" placeholder="이메일 주소" />
+          <input
+            type="password"
+            class="line-input"
+            placeholder="비밀번호 (8자 이상)"
+          />
+        </div>
+        <button
+          class="btn-bottom"
+          onclick="
+            updateUser();
+            go('view-record');
+          "
+        >
+          가입 완료
+        </button>
+      </section>
+
+      <section id="view-record" class="view">
+        <h2>오늘 무엇을<br /><span class="purple-txt">실천했나요?</span></h2>
+        <div class="habit-container">
+          <div class="habit-card" onclick="this.classList.toggle('checked')">
+            <div class="habit-info">
+              <span class="emoji">🧘</span>
+              <span class="name">아침 10분 스트레칭</span>
+            </div>
+            <div class="check-circle"></div>
+          </div>
+          <div class="habit-card" onclick="this.classList.toggle('checked')">
+            <div class="habit-info">
+              <span class="emoji">💧</span>
+              <span class="name">물 2L 마시기</span>
+            </div>
+            <div class="check-circle"></div>
+          </div>
+          <div class="habit-card" onclick="this.classList.toggle('checked')">
+            <div class="habit-info">
+              <span class="emoji">🏃</span>
+              <span class="name">10분 산책</span>
+            </div>
+            <div class="check-circle"></div>
+          </div>
+        </div>
+        <button class="btn-bottom" onclick="go('view-success')">
+          오늘 실천 완료!
+        </button>
+      </section>
+
+      <section id="view-success" class="view">
+        <div class="success-box">
+          <h2 style="font-size: 28px">“위기를 넘겼네요!”</h2>
+          <p class="sub-txt" style="font-size: 16px">
+            오늘의 잔디가 무사히 심어졌습니다.
+          </p>
+          <div class="success-badge">포기 확률이 12.5% 감소했어요!</div>
+        </div>
+        <button class="btn-bottom" onclick="go('view-mypage')">
+          내 잔디 보러가기
+        </button>
+      </section>
+
+      <section id="view-mypage" class="view">
+        <div class="profile-card">
+          <div class="profile-img"></div>
+          <h2 id="display-name" style="font-size: 20px">사용자</h2>
+          <p class="sub-txt">현재 3일 연속 달성 중 🌱</p>
+        </div>
+
+        <div class="grass-area">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 12px;
+              align-items: center;
+            "
+          >
+            <span style="font-weight: 900; font-size: 15px"
+              >나의 활동 잔디</span
+            >
+            <span style="font-size: 12px; color: #d4a017">GOLD 등급</span>
+          </div>
+          <div class="grass-grid" id="grassGrid"></div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <div
+            style="
+              padding: 16px 0;
+              border-bottom: 1px solid #f0f0f0;
+              display: flex;
+              justify-content: space-between;
+              cursor: pointer;
+            "
+          >
+            <span>활동 통계 보기</span> <span>></span>
+          </div>
+          <div
+            style="
+              padding: 16px 0;
+              border-bottom: 1px solid #f0f0f0;
+              display: flex;
+              justify-content: space-between;
+              cursor: pointer;
+            "
+          >
+            <span>환경 설정</span> <span>></span>
+          </div>
+        </div>
+
+        <button
+          class="btn-bottom"
+          style="background: var(--gray-f); color: #666"
+          onclick="location.reload()"
+        >
+          로그아웃
+        </button>
+      </section>
+    </div>
+
+    <script>
+      // 1. 네비게이션 로직
+      function go(viewId) {
+        document
+          .querySelectorAll(".view")
+          .forEach((v) => v.classList.remove("active"));
+        document.getElementById(viewId).classList.add("active");
+
+        // 마이페이지 진입 시 잔디 렌더링
+        if (viewId === "view-mypage") renderGrass();
+      }
+
+      // 2. 닉네임 반영
+      function updateUser() {
+        const nick = document.getElementById("user-nick").value || "YEDI";
+        document.getElementById("display-name").innerText = nick;
+      }
+
+      // 3. 잔디 렌더링 로직 (성취감을 위해 일부 활성화)
+      function renderGrass() {
+        const grid = document.getElementById("grassGrid");
+        grid.innerHTML = "";
+        for (let i = 0; i < 28; i++) {
+          const cell = document.createElement("div");
+          // 샘플로 1~12일까지와 25~28일차 활성화
+          cell.className = "cell" + (i < 12 || i > 24 ? " active" : "");
+          cell.style.transitionDelay = i * 0.01 + "s";
+          grid.appendChild(cell);
+        }
+      }
+
+      // 4. 스플래시 딜레이 (2초 후 자동 이동)
+      window.onload = () => {
+        setTimeout(() => go("view-entry"), 2000);
+      };
+    </script>
+  </body>
+</html>
