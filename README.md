@@ -4,10 +4,6 @@
 
 ### 기록의 부담은 줄이고, 다시 시작할 수 있는 경험을 담은 습관 기록 서비스
 
-<br/>
-
-<img width="1200" alt="thumbnail" src="여기에_대표이미지_링크삽입"/>
-
 </div>
 
 ---
@@ -168,12 +164,12 @@
 
 ## UI Design Point
 
-| 요소 | 설계 의도 |
-|---|---|
-| 큰 버튼 구조 | 빠른 행동 유도 |
-| 토스트 메시지 | 즉각적 성취감 제공 |
-| 상태 변화 UI | 현재 상태 직관적 인지 |
-| 컬러 변화 | 감정 흐름 전달 |
+| 요소          | 설계 의도             |
+| ------------- | --------------------- |
+| 큰 버튼 구조  | 빠른 행동 유도        |
+| 토스트 메시지 | 즉각적 성취감 제공    |
+| 상태 변화 UI  | 현재 상태 직관적 인지 |
+| 컬러 변화     | 감정 흐름 전달        |
 
 ---
 
@@ -184,20 +180,12 @@
 - 입력 요소 최소화
 - 빠른 시작 흐름 설계
 
-<br/>
-
-<img width="100%" src="여기에_로그인화면_이미지"/>
-
 ---
 
 ## 메인 홈
 
 - 현재 상태 우선 노출
 - 핵심 정보 빠른 인지
-
-<br/>
-
-<img width="100%" src="여기에_메인홈_이미지"/>
 
 ---
 
@@ -206,10 +194,6 @@
 - 클릭 중심 입력
 - 행동 허들 감소
 
-<br/>
-
-<img width="100%" src="여기에_기록화면_이미지"/>
-
 ---
 
 ## 수확 완료 토스트
@@ -217,31 +201,11 @@
 - 즉각적인 피드백 제공
 - 성취감 강화
 
-<br/>
-
-<img width="100%" src="여기에_토스트_이미지"/>
-
 ---
 
 # 🛠 Tech Stack
 
 <div align="left">
-
-### Design
-
-<img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white"/>
-
-<img src="https://img.shields.io/badge/Photoshop-31A8FF?style=for-the-badge&logo=AdobePhotoshop&logoColor=white"/>
-
----
-
-### Frontend
-
-<img src="https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=html5&logoColor=white"/>
-
-<img src="https://img.shields.io/badge/CSS-1572B6?style=for-the-badge&logo=css3&logoColor=white"/>
-
-<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"/>
 
 </div>
 
