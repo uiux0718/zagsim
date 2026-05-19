@@ -771,6 +771,171 @@
       }
 
       renderGrid();
+      <script>
+  // 1. LocalStorage 연동을 통한 데이터 영속성 확보
+  let state = JSON.parse(localStorage.getItem('zagsim_farm_state')) || {
+    total: 0,
+    lands: 1,
+    streak: 0,
+    history: [],
+    lastHarvest: new Date().toISOString(), // 날짜 직렬화 대응
+    notiRemind: true,
+    notiPenalty: true,
+  };
+
+  // 기존 보관 데이터가 문자열일 경우 Date 객체 파싱을 위한 헬퍼
+  function getLastHarvestDate() {
+    return new Date(state.lastHarvest);
+  }
+
+  function saveState() {
+    localStorage.setItem('zagsim_farm_state', JSON.stringify(state));
+  }
+
+  function go(id) {
+    // 최소한의 로그인 유효성 흉내 (인증 폼 기입 여부 체크 흐름 확장용)
+    if (id === 's-home' && document.getElementById('s-login').classList.contains('active')) {
+      const email = document.querySelector('#s-login input[type="email"]').value;
+      if (!email.includes('@')) {
+        showToast("올바른 이메일 형식을 입력해주세요.");
+        return;
+      }
+    }
+
+    document
+      .querySelectorAll(".screen")
+      .forEach((s) => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+
+    const isAuth = id === "s-login" || id === "s-join";
+    document.getElementById("main-nav").style.display = isAuth ? "none" : "flex";
+
+    const navItems = document.querySelectorAll(".nav-item");
+    if (id === "s-home") {
+      navItems[0].classList.add("active");
+      navItems[1].classList.remove("active");
+      navItems[0].querySelector(".nav-dot").style.opacity = 1;
+      navItems[1].querySelector(".nav-dot").style.opacity = 0;
+      renderGrid();
+    } else if (id === "s-mypage") {
+      navItems[1].classList.add("active");
+      navItems[0].classList.remove("active");
+      navItems[1].querySelector(".nav-dot").style.opacity = 1;
+      navItems[0].querySelector(".nav-dot").style.opacity = 0;
+      renderMypage();
+    }
+    checkSystem();
+  }
+
+  function createNewHabit() {
+    const input = document.getElementById("habit-input");
+    const name = input.value.trim();
+    if (!name) return;
+
+    const container = document.getElementById("habit-container");
+    const card = document.createElement("div");
+    card.className = "habit-card";
+    card.onclick = () => harvest(name);
+    card.innerHTML = `<div class="habit-icon-box"><div class="habit-dot"></div></div><p class="habit-name">${name}</p>`;
+
+    container.appendChild(card);
+    input.value = "";
+    closeAddModal();
+    showToast("기록 카드가 추가되었습니다.");
+  }
+
+  function harvest(name) {
+    state.total++;
+    state.streak++;
+    state.lastHarvest = new Date().toISOString();
+    if (state.total > 0 && state.total % 30 === 0) state.lands++;
+
+    const now = new Date();
+    // 2. 시간 및 분 패딩 처리 (:5 -> :05) 오류 수정
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    
+    state.history.unshift({
+      name,
+      time: `${now.getMonth() + 1}월 ${now.getDate()}일 ${hours}:${minutes}`,
+    });
+    
+    saveState(); // 데이터 저장
+    showToast(`${name} 수확 완료!`);
+    renderGrid();
+  }
+
+  function checkSystem() {
+    const hours = (new Date() - getLastHarvestDate()) / (1000 * 60 * 60);
+    const isWithered = hours >= 72;
+    renderGrid(isWithered);
+  }
+
+  // 3. 잔디밭 격자 %8 오류 및 리셋 시각성 교정
+  function renderGrid(isWithered = false) {
+    const grid = document.getElementById("grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    
+    // 7칸 기준 스크릭 매핑 로직 정형화
+    // 0회면 0칸, 1~6회면 해당 칸, 7회 이상이면서 7의 배수이면 7칸 만땅 표시
+    let activeCount = state.streak % 7;
+    if (state.streak > 0 && activeCount === 0) {
+      activeCount = 7; 
+    }
+
+    for (let i = 0; i < 7; i++) {
+      const cell = document.createElement("div");
+      const isActive = i < activeCount;
+      cell.style.cssText = `aspect-ratio: 1; border-radius: 8px; background: ${isActive ? (isWithered ? "var(--withered)" : "var(--grass)") : "#ffffff"}; border: 1px solid var(--light-gray);`;
+      grid.appendChild(cell);
+    }
+    
+    document.getElementById("streak-txt").innerText = isWithered
+      ? "잔디가 시들고 있어요"
+      : `연속 수확 ${state.streak}회차`;
+  }
+
+  function renderMypage() {
+    document.getElementById("val-total").innerText = state.total;
+    document.getElementById("val-land").innerText = state.lands;
+    const list = document.getElementById("history-list");
+    list.innerHTML =
+      state.history
+        .map(
+          (h) => `
+        <div style="background:var(--light-gray); padding:20px; border-radius:20px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:800; font-size:15px;">${h.name}</span>
+            <span style="font-size:12px; color:var(--gray); font-weight:600;">${h.time}</span>
+        </div>
+    `,
+        )
+        .join("") ||
+      '<p style="text-align:center; color:var(--gray); margin-top:40px; font-weight:600;">아직 수확 기록이 없습니다.</p>';
+  }
+
+  function toggleNoti(type) {
+    const target = type === "remind" ? "notiRemind" : "notiPenalty";
+    state[target] = !state[target];
+    document.getElementById(`t-${type}`).classList.toggle("on");
+    saveState();
+  }
+
+  function openAddModal() { document.getElementById("add-modal").style.display = "flex"; }
+  function closeAddModal() { document.getElementById("add-modal").style.display = "none"; }
+  function openRules() { document.getElementById("rules-modal").style.display = "flex"; }
+  function closeRules() { document.getElementById("rules-modal").style.display = "none"; }
+  
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.innerText = msg;
+    t.style.display = "block";
+    setTimeout(() => (t.style.display = "none"), 2000);
+  }
+
+  // 초기 구동 실행
+  renderGrid();
+</script>
     </script>
   </body>
 </html>
