@@ -66,7 +66,7 @@
         z-index: 10;
       }
 
-      /* 로고 스타일 (업로드하신 일러스트 로고 적용) */
+      /* 로고 스타일 */
       .logo-container {
         display: flex;
         align-items: center;
@@ -221,7 +221,7 @@
         font-weight: 600;
       }
 
-      /* 하단 내비게이션 바 (시안 참조) */
+      /* 하단 내비게이션 바 */
       .bottom-nav {
         position: absolute;
         bottom: 0;
@@ -280,6 +280,20 @@
       }
       .toggle.on .toggle-handle {
         left: 23px;
+      }
+
+      /* ==========================================
+         [추가된 코드] 알림 설정 카드 (.noti-card) 디자인 복원
+         ========================================== */
+      .noti-card {
+        background-color: var(--light-gray);
+        border-radius: 24px;
+        padding: 24px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+        margin-bottom: 12px;
       }
 
       /* 팝업 모달 */
@@ -344,7 +358,7 @@
           "
         >
           <div class="logo-container">
-            <img src="logo.png" alt="작심농장" class="main-logo" />
+            <img src="agsim_logo.png" alt="작심농장" class="main-logo" />
             <span class="logo-text">작심농장</span>
           </div>
           <h1
@@ -401,12 +415,10 @@
             <label>이름</label><input type="text" placeholder="이름 입력" />
           </div>
           <div class="input-group">
-            <label>이메일</label
-            ><input type="email" placeholder="이메일 입력" />
+            <label>이메일</label><input type="email" placeholder="이메일 입력" />
           </div>
           <div class="input-group">
-            <label>비밀번호</label
-            ><input type="password" placeholder="8자 이상 입력" />
+            <label>비밀번호</label><input type="password" placeholder="8자 이상 입력" />
           </div>
           <button class="btn-primary" onclick="go('s-login')">등록 완료</button>
         </div>
@@ -424,7 +436,7 @@
               cursor: pointer;
             "
           >
-            <img src="logo.png" alt="logo" style="height: 28px" />
+            <img src="agsim_logo.png" alt="logo" style="height: 28px" />
             <span style="font-weight: 900; font-size: 16px">작심농장</span>
           </div>
           <span class="header-action" onclick="go('s-noti')">알림설정</span>
