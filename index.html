@@ -11,6 +11,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
     />
+    <link rel="stylesheet" href="zagsim_style.css" />
     <style>
       :root {
         --primary: #7c6dff; /* 시안의 메인 보라색 */
@@ -254,33 +255,7 @@
         margin: 0 auto 6px;
       }
 
-      /* 토글 스위치 */
-      .toggle {
-        width: 52px;
-        height: 31px;
-        background: #e5e5ea;
-        border-radius: 16px;
-        position: relative;
-        cursor: pointer;
-        transition: 0.3s;
-      }
-      .toggle.on {
-        background: var(--primary);
-      }
-      .toggle-handle {
-        width: 27px;
-        height: 27px;
-        background: white;
-        border-radius: 50%;
-        position: absolute;
-        top: 2px;
-        left: 2px;
-        transition: 0.3s;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-      }
-      .toggle.on .toggle-handle {
-        left: 23px;
-      }
+      /* 💡 중복 및 덮어쓰기 오류가 발생하던 토글 관련 스타일 코드를 완전히 청소했습니다. 외부 CSS를 따릅니다. */
 
       /* 팝업 모달 */
       .overlay {
@@ -482,21 +457,17 @@
         <div style="margin-top: 10px">
           <div class="noti-card">
             <div>
-              <h4 style="font-weight: 800">수확 리마인더</h4>
-              <p style="font-size: 12px; color: var(--gray); margin-top: 4px">
-                매일 잊지 않도록 푸시를 보냅니다
-              </p>
+              <h4>수확 리마인더</h4>
+              <p>매일 잊지 않도록 푸시를 보냅니다</p>
             </div>
             <div class="toggle on" id="t-remind" onclick="toggleNoti('remind')">
               <div class="toggle-handle"></div>
             </div>
           </div>
-          <div class="noti-card" style="margin-top: 12px">
+          <div class="noti-card">
             <div>
-              <h4 style="font-weight: 800">패널티 경고</h4>
-              <p style="font-size: 12px; color: var(--gray); margin-top: 4px">
-                3일간 미수확 시 경고 알림을 보냅니다
-              </p>
+              <h4>패널티 경고</h4>
+              <p>3일간 미수확 시 경고 알림을 보냅니다</p>
             </div>
             <div
               class="toggle on"
@@ -658,7 +629,6 @@
           ? "none"
           : "flex";
 
-        // 내비게이션 활성화 표시
         const navItems = document.querySelectorAll(".nav-item");
         if (id === "s-home") {
           navItems[0].classList.add("active");
