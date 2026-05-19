@@ -1,1 +1,118 @@
 
+/* 잔디 기본 상태 */
+.cell {
+  aspect-ratio: 1;
+  background: #333;
+  border-radius: 4px;
+  transition: transform 0.2s ease;
+}
+
+/* 데이터가 있는 잔디에 애니메이션 적용 */
+.cell.active-grass {
+  animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* 마우스를 올리거나 터치했을 때 살짝 커지는 효과 (Interactive) */
+.cell:active {
+  transform: scale(1.2);
+  z-index: 10;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0);
+    filter: brightness(2); /* 처음 나타날 때 살짝 반짝임 */
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+/* 첫 번째 코드의 :root 부분에 추가/수정 */
+:root {
+  /* ... 기존 변수들 ... */
+  --grass: #4cd964;
+  --withered-bg: #e2dcc8; /* 말라버린 흙 색상 */
+  --withered-grass: #8d775f; /* 시든 풀의 탁한 갈색 */
+}
+
+/* 시든 상태의 셀 스타일 */
+.cell.withered {
+  background: var(--withered-bg) !important;
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1); /* 움푹 들어간 느낌 */
+  position: relative;
+  overflow: hidden;
+}
+
+.cell.withered::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 2px;
+  background: var(--withered-grass);
+  transform: translate(-50%, -50%) rotate(-15deg); /* 꺾인 풀 형상 */
+  border-radius: 2px;
+}
+/* :root 변수 업데이트 */
+:root {
+  --primary: #7c6dff;
+  --bg: #ffffff;
+  --text: #1c1c1e;
+  --gray: #8e8e93;
+  --light-gray: #f2f2f7;
+  --grass: #4cd964;
+  --withered-bg: #e2dcc8; /* 시든 흙 색상 */
+  --withered-grass: #8d775f; /* 시든 풀 색상 */
+}
+
+/* 잔디 셀 기본 스타일 및 애니메이션 */
+.cell {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  background: #ffffff; /* 미수확 상태 */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  border: 1px solid var(--light-gray);
+}
+
+/* 수확 성공: 생생한 잔디 */
+.cell.active {
+  background: var(--grass) !important;
+  box-shadow: 0 4px 12px rgba(76, 217, 100, 0.4);
+  transform: scale(1.05);
+  border: none;
+  animation: grow 0.5s ease-out;
+}
+
+/* 실패: 시든 잔디 (재진입 유도) */
+.cell.withered {
+  background: var(--withered-bg) !important;
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.05);
+  border: none;
+}
+
+.cell.withered::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 2px;
+  background: var(--withered-grass);
+  transform: translate(-50%, -50%) rotate(-15deg);
+  border-radius: 2px;
+  opacity: 0.6;
+}
+
+@keyframes grow {
+  0% {
+    transform: scale(0.5);
+    filter: brightness(1.5);
+  }
+  100% {
+    transform: scale(1.05);
+    filter: brightness(1);
+  }
+}
