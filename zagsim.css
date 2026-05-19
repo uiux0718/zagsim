@@ -1,117 +1,461 @@
-/* 잔디 기본 상태 */
-.cell {
-  aspect-ratio: 1;
-  background: #333;
-  border-radius: 4px;
-  transition: transform 0.2s ease;
-}
-
-/* 데이터가 있는 잔디에 애니메이션 적용 */
-.cell.active-grass {
-  animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-/* 마우스를 올리거나 터치했을 때 살짝 커지는 효과 (Interactive) */
-.cell:active {
-  transform: scale(1.2);
-  z-index: 10;
-}
-
-@keyframes pop {
-  0% {
-    transform: scale(0);
-    filter: brightness(2); /* 처음 나타날 때 살짝 반짝임 */
-  }
-  100% {
-    transform: scale(1);
-    filter: brightness(1);
-  }
-}
-/* 첫 번째 코드의 :root 부분에 추가/수정 */
 :root {
-  /* ... 기존 변수들 ... */
-  --grass: #4cd964;
-  --withered-bg: #e2dcc8; /* 말라버린 흙 색상 */
-  --withered-grass: #8d775f; /* 시든 풀의 탁한 갈색 */
-}
 
-/* 시든 상태의 셀 스타일 */
-.cell.withered {
-  background: var(--withered-bg) !important;
-  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1); /* 움푹 들어간 느낌 */
-  position: relative;
-  overflow: hidden;
-}
+  --p: #7c6dff;
 
-.cell.withered::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 60%;
-  height: 2px;
-  background: var(--withered-grass);
-  transform: translate(-50%, -50%) rotate(-15deg); /* 꺾인 풀 형상 */
-  border-radius: 2px;
-}
-/* :root 변수 업데이트 */
-:root {
-  --primary: #7c6dff;
-  --bg: #ffffff;
-  --text: #1c1c1e;
+  --bg: #f8f9fa;
+
+  --txt: #1a1a1a;
+
   --gray: #8e8e93;
-  --light-gray: #f2f2f7;
-  --grass: #4cd964;
-  --withered-bg: #e2dcc8; /* 시든 흙 색상 */
-  --withered-grass: #8d775f; /* 시든 풀 색상 */
+
+  --red: #ff4b4b;
+
 }
 
-/* 잔디 셀 기본 스타일 및 애니메이션 */
-.cell {
-  aspect-ratio: 1;
-  border-radius: 8px;
-  background: #ffffff; /* 미수확 상태 */
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+​
+
+* {
+
+  box-sizing: border-box;
+
+  margin: 0;
+
+  padding: 0;
+
+  font-family: "Pretendard", sans-serif;
+
+  letter-spacing: -0.04em;
+
+}
+
+body {
+
+  background: #eef0f3;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  min-height: 100vh;
+
+}
+
+​
+
+.iphone-frame {
+
+  width: 375px;
+
+  height: 812px;
+
+  background: #fff;
+
+  border-radius: 40px;
+
   position: relative;
-  border: 1px solid var(--light-gray);
+
+  overflow: hidden;
+
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15);
+
+  border: 8px solid #222;
+
 }
 
-/* 수확 성공: 생생한 잔디 */
-.cell.active {
-  background: var(--grass) !important;
-  box-shadow: 0 4px 12px rgba(76, 217, 100, 0.4);
-  transform: scale(1.05);
-  border: none;
-  animation: grow 0.5s ease-out;
-}
+​
 
-/* 실패: 시든 잔디 (재진입 유도) */
-.cell.withered {
-  background: var(--withered-bg) !important;
-  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.05);
-  border: none;
-}
+.view {
 
-.cell.withered::after {
-  content: "";
+  display: none;
+
+  height: 100%;
+
+  width: 100%;
+
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 50%;
-  height: 2px;
-  background: var(--withered-grass);
-  transform: translate(-50%, -50%) rotate(-15deg);
-  border-radius: 2px;
-  opacity: 0.6;
+
+  background: #fff;
+
+  flex-direction: column;
+
 }
 
-@keyframes grow {
-  0% {
-    transform: scale(0.5);
-    filter: brightness(1.5);
+.view.active {
+
+  display: flex;
+
+  animation: fadeIn 0.4s ease-out;
+
+}
+
+@keyframes fadeIn {
+
+  from {
+
+    opacity: 0;
+
+    transform: scale(0.98);
+
   }
-  100% {
-    transform: scale(1.05);
-    filter: brightness(1);
+
+  to {
+
+    opacity: 1;
+
+    transform: scale(1);
+
   }
+
+}
+
+​
+
+.inner {
+
+  padding: 20px 24px;
+
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+.flex-center {
+
+  justify-content: center;
+
+  align-items: center;
+
+  text-align: center;
+
+}
+
+​
+
+/* 공통 UI 요소 */
+
+.purple {
+
+  color: var(--p);
+
+}
+
+.btn-full {
+
+  width: 100%;
+
+  padding: 20px;
+
+  border-radius: 18px;
+
+  border: none;
+
+  background: var(--p);
+
+  color: #fff;
+
+  font-size: 17px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+}
+
+.fixed-bottom {
+
+  margin-top: auto;
+
+  margin-bottom: 20px;
+
+}
+
+.input-base {
+
+  width: 100%;
+
+  padding: 18px;
+
+  border-radius: 15px;
+
+  border: 1.5px solid #f0f0f0;
+
+  background: var(--bg);
+
+  font-size: 16px;
+
+  margin-top: 10px;
+
+}
+
+​
+
+/* 헤더 */
+
+.app-header,
+
+.sub-header {
+
+  padding: 50px 24px 15px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+}
+
+.sub-header {
+
+  justify-content: flex-start;
+
+  gap: 15px;
+
+}
+
+.back-btn {
+
+  background: none;
+
+  border: none;
+
+  font-size: 24px;
+
+  cursor: pointer;
+
+}
+
+​
+
+/* 상태 카드 */
+
+.card-status {
+
+  padding: 30px 24px;
+
+  border-radius: 30px;
+
+  color: #fff;
+
+  margin-bottom: 30px;
+
+  transition: 0.3s;
+
+  cursor: pointer;
+
+}
+
+.card-status.normal {
+
+  background: var(--p);
+
+  box-shadow: 0 15px 30px rgba(124, 109, 255, 0.3);
+
+}
+
+.card-status.danger {
+
+  background: var(--red);
+
+  box-shadow: 0 15px 30px rgba(255, 75, 75, 0.3);
+
+}
+
+.card-status p {
+
+  font-size: 13px;
+
+  opacity: 0.8;
+
+  margin-bottom: 5px;
+
+}
+
+.progress {
+
+  height: 6px;
+
+  background: rgba(255, 255, 255, 0.2);
+
+  border-radius: 10px;
+
+  margin-top: 15px;
+
+}
+
+.bar {
+
+  height: 100%;
+
+  background: #fff;
+
+  border-radius: 10px;
+
+}
+
+​
+
+/* 리스트 스타일 */
+
+.habit-card {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 22px;
+
+  background: var(--bg);
+
+  border-radius: 20px;
+
+  margin-bottom: 12px;
+
+  cursor: pointer;
+
+}
+
+.check {
+
+  width: 24px;
+
+  height: 24px;
+
+  border: 2px solid #ddd;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+}
+
+.habit-card.done {
+
+  background: #f1f0ff;
+
+}
+
+.habit-card.done .check {
+
+  background: var(--p);
+
+  border-color: var(--p);
+
+}
+
+​
+
+/* 알림 및 기타 */
+
+.intervention-alert {
+
+  background: #fff0f0;
+
+  border: 1px solid var(--red);
+
+  padding: 20px;
+
+  border-radius: 20px;
+
+  margin-top: auto;
+
+}
+
+.intervention-alert button {
+
+  width: 100%;
+
+  margin-top: 10px;
+
+  padding: 12px;
+
+  border-radius: 10px;
+
+  border: none;
+
+  background: var(--red);
+
+  color: #fff;
+
+  font-weight: 600;
+
+}
+
+.hide {
+
+  display: none;
+
+}
+
+.main-logo {
+
+  font-size: 80px;
+
+  margin-bottom: 10px;
+
+}
+
+.logo-title {
+
+  font-size: 28px;
+
+  font-weight: 800;
+
+}
+
+.logo-sub {
+
+  color: var(--gray);
+
+  margin-top: 10px;
+
+  line-height: 1.5;
+
+}
+
+​
+
+/* 리포트 그래프 */
+
+.graph-area {
+
+  height: 150px;
+
+  background: var(--bg);
+
+  border-radius: 20px;
+
+  display: flex;
+
+  align-items: flex-end;
+
+  padding: 20px;
+
+  gap: 15px;
+
+  margin-top: 20px;
+
+}
+
+.b-item {
+
+  flex: 1;
+
+  background: #ddd;
+
+  border-radius: 5px;
+
+}
+
+.b-item.danger {
+
+  background: var(--red);
+
 }
