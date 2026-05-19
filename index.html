@@ -1,393 +1,331 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html lang="ko">
 
-<head>
+  <head>
 
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
 
-    <title>작심삼일 감지기 - Interaction Fix</title>
+      name="viewport"
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
 
-    <style>
+    />
 
-        :root {
+    <title>작심삼일 감지기</title>
 
-            --p: #7C6DFF; --p-light: #F1F0FF; --bg: #FFFFFF; 
+    <link rel="stylesheet" href="style.css" />
 
-            --gray-f: #F8F9FA; --gray-e: #EEEEEE; --text: #1A1A1A; --sub: #8E8E93;
+  </head>
 
-        }
+  <body>
 
-​
+    <div class="iphone-frame">
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Pretendard', sans-serif; letter-spacing: -0.6px; -webkit-tap-highlight-color: transparent; }
+      <section id="v-onboarding" class="view active">
 
-        body { background-color: #E9ECEF; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        <div class="inner flex-center">
 
-​
+          <div class="main-logo">🔥</div>
 
-        /* iPhone Frame */
+          <h1 class="logo-title">
 
-        .iphone {
+            작심삼일 <span class="purple">감지기</span>
 
-            width: 375px; height: 812px; background: var(--bg); border-radius: 44px;
+          </h1>
 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.15); position: relative; overflow: hidden;
+          <p class="logo-sub">당신의 이탈 징후를 <br />똑똑하게 감지합니다.</p>
 
-            display: flex; flex-direction: column; border: 8px solid #1A1A1A;
+          <button class="btn-full" onclick="go('v-goal')">지금 시작하기</button>
 
-        }
+        </div>
 
-​
-
-        /* [핵심 수정] 스크롤 가능 영역 설정 */
-
-        .view-container { 
-
-            flex: 1; 
-
-            position: relative; 
-
-            overflow-y: auto; /* 내부 콘텐츠가 길어지면 스크롤 가능하게 함 */
-
-            -webkit-overflow-scrolling: touch;
-
-        }
-
-        .view-container::-webkit-scrollbar { display: none; }
+      </section>
 
 ​
 
-        .view { 
+      <section id="v-goal" class="view">
 
-            display: none; 
+        <header class="sub-header">
 
-            width: 100%; 
+          <button class="back-btn" onclick="go('v-onboarding')">←</button>
 
-            padding: 60px 24px 120px; /* GNB에 가려지지 않도록 하단 여백 충분히 확보 */
+          <h2>목표 설정</h2>
 
-            flex-direction: column; 
+        </header>
 
-        }
+        <div class="inner">
 
-        .view.active { display: flex; animation: fadeIn 0.3s ease-out; }
+          <div class="form-group">
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            <label>달성하고 싶은 목표</label>
 
-​
+            <input
 
-        /* Typography & Components */
+              type="text"
 
-        .h-title { font-size: 26px; font-weight: 800; line-height: 1.4; margin-bottom: 24px; color: var(--text); }
+              placeholder="예: 매일 운동하기"
 
-        .btn-main { width: calc(100% - 48px); padding: 20px; background: var(--p); color: white; border: none; border-radius: 20px; font-size: 17px; font-weight: 800; cursor: pointer; position: absolute; bottom: 40px; left: 24px; }
+              class="input-base"
 
-​
+            />
 
-        /* Habit Cards (Home) */
+          </div>
 
-        .date-chip { color: var(--p); font-weight: 800; font-size: 13px; margin-bottom: 6px; }
+          <div class="form-group">
 
-        .habit-card { background: var(--gray-f); border-radius: 24px; padding: 20px; margin-bottom: 16px; cursor: pointer; }
+            <label>실천 빈도</label>
 
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+            <div class="chip-row">
 
-        .habit-title { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 800; color: var(--text); }
+              <button class="chip active">매일</button>
 
-        
+              <button class="chip">주 3회</button>
 
-        .toggle { width: 44px; height: 24px; background: var(--gray-e); border-radius: 12px; position: relative; cursor: pointer; }
-
-        .toggle::after { content: ''; position: absolute; width: 18px; height: 18px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: 0.2s; }
-
-        .toggle.active { background: var(--p); }
-
-        .toggle.active::after { left: 23px; }
-
-​
-
-        /* My Page */
-
-        .profile-box { text-align: center; margin: 20px 0 32px; }
-
-        .avatar-circle { width: 84px; height: 84px; background: #E5E5EA; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 30px; border: 3px solid var(--p-light); }
-
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 32px; }
-
-        .stat-item { background: var(--gray-f); border-radius: 20px; padding: 20px; text-align: center; }
-
-        .stat-item b { display: block; font-size: 22px; font-weight: 900; color: var(--p); margin-bottom: 4px; }
-
-        .stat-item span { font-size: 11px; color: var(--sub); font-weight: 800; }
-
-​
-
-        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid #F2F2F7; cursor: pointer; }
-
-​
-
-        /* [핵심 수정] 하단 네비게이션(GNB) */
-
-        .gnb { 
-
-            position: absolute; bottom: 0; width: 100%; height: 90px; 
-
-            background: #fff; border-top: 1px solid var(--gray-e); 
-
-            display: none; justify-content: space-around; align-items: center; 
-
-            padding-bottom: 25px; z-index: 1000;
-
-        }
-
-        .nav-tab { flex: 1; text-align: center; color: var(--sub); cursor: pointer; }
-
-        .nav-tab.active { color: var(--p); }
-
-        .nav-tab span { font-size: 24px; display: block; }
-
-        .nav-tab label { font-size: 10px; font-weight: 800; margin-top: 4px; display: block; }
-
-    </style>
-
-</head>
-
-<body>
-
-​
-
-<div class="iphone">
-
-    <div class="view-container" id="scroll-area">
-
-        
-
-        <section id="v-splash" class="view active" style="justify-content: center; align-items: center; height: 100%;">
-
-            <img src="logo.png" alt="Logo" style="width:130px; margin-bottom:20px;" onerror="this.src='https://via.placeholder.com/130x130.png?text=Logo'">
-
-            <h1 style="font-size:24px; font-weight:900;">작심삼일 감지기</h1>
-
-        </section>
-
-​
-
-        <section id="v-home" class="view">
-
-            <p class="date-chip">2026. 04. 21 TUE</p>
-
-            <h2 class="h-title">오늘의 실천을<br>체크해 보세요.</h2>
-
-            <p style="font-size:17px; font-weight:800; margin: 32px 0 16px;">나의 습관들</p>
-
-            
-
-            <div class="habit-card" onclick="go('v-write')">
-
-                <div class="card-header">
-
-                    <div class="habit-title"><span>💧</span> 하루 물 2L 마시기</div>
-
-                    <div class="toggle active" onclick="event.stopPropagation(); this.classList.toggle('active')"></div>
-
-                </div>
-
-                <div style="display:flex; flex-direction:column; gap:4px;">
-
-                    <span style="font-size:14px; color:var(--p); font-weight:800;">진행률 85%</span>
-
-                    <span style="font-size:14px; color:var(--sub); font-weight:500;">오늘 1.7L 마셨어요. 조금만 더!</span>
-
-                </div>
+              <button class="chip">주 5회</button>
 
             </div>
 
-​
+          </div>
 
-            <div class="habit-card">
+          <button class="btn-full fixed-bottom" onclick="go('v-home')">
 
-                <div class="card-header">
+            설정 완료
 
-                    <div class="habit-title"><span>📖</span> 독서 30분 하기</div>
+          </button>
 
-                    <div class="toggle" onclick="event.stopPropagation(); this.classList.toggle('active')"></div>
+        </div>
 
-                </div>
-
-                <span style="font-size:14px; color:var(--sub); font-weight:500;">아직 시작 전이에요.</span>
-
-            </div>
+      </section>
 
 ​
 
-            <button class="btn-main" style="position: relative; left: 0; width: 100%; margin-top: 20px; bottom: auto;" onclick="go('v-write')">기록 추가하기 +</button>
+      <section id="v-home" class="view">
 
-        </section>
+        <header class="app-header">
+
+          <span class="date">2026.04.23</span>
+
+          <div class="user-icon" onclick="go('v-settings')">👤</div>
+
+        </header>
+
+        <div class="inner">
+
+          <div
+
+            id="status-card"
+
+            class="card-status normal"
+
+            onclick="simulateDanger()"
+
+          >
+
+            <p>현재 감지 상태</p>
+
+            <h2 id="status-text">안전 유지 중 ✅</h2>
+
+            <div class="progress">
+
+              <div class="bar" style="width: 100%"></div>
+
+            </div>
+
+          </div>
 
 ​
 
-        <section id="v-mypage" class="view">
+          <div class="section-title">오늘의 기록</div>
 
-            <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 24px;">마이페이지</h2>
+          <div class="habit-list">
 
-            <div class="profile-box">
+            <div class="habit-card" onclick="this.classList.toggle('done')">
 
-                <div class="avatar-circle">👤</div>
+              <span>🧘 아침 스트레칭</span>
 
-                <h3 style="font-size:20px; font-weight:800;">YEDI</h3>
-
-                <p style="font-size:13px; color:var(--sub); margin-top:4px;">yedi_design@example.com</p>
+              <div class="check"></div>
 
             </div>
 
-            <div class="stat-grid">
+            <div class="habit-card" onclick="this.classList.toggle('done')">
 
-                <div class="stat-item"><b>42회</b><span>누적 기록</span></div>
+              <span>📖 독서 30분</span>
 
-                <div class="stat-item"><b>18일</b><span>최고 연속</span></div>
-
-            </div>
-
-            <div class="list-group">
-
-                <div class="list-item"><span>공지사항</span><span style="color:#C7C7CC;">〉</span></div>
-
-                <div class="list-item"><span>알림 설정</span><span style="color:#C7C7CC;">〉</span></div>
-
-                <div class="list-item" style="border:none;"><span style="color:#FF4B4B;">로그아웃</span></div>
+              <div class="check"></div>
 
             </div>
 
-        </section>
+          </div>
 
 ​
 
-        <section id="v-write" class="view">
+          <div id="alert-box" class="intervention-alert hide">
 
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+            <p>🚨 <strong>위험!</strong> 2일째 미기록 중</p>
 
-                <span onclick="go('v-home')" style="cursor:pointer; font-size:20px;">✕</span>
+            <small>“지금 포기 중입니다.” 리커버리 할까요?</small>
 
-                <b style="font-size:18px;">기록하기</b>
+            <button onclick="go('v-report')">내 패턴 분석 보기</button>
 
-                <span onclick="go('v-home')" style="color:var(--p); font-weight:800; cursor:pointer;">저장</span>
+          </div>
 
-            </div>
+        </div>
 
-            <div style="background:var(--gray-f); border-radius:28px; padding:28px; flex:1;">
-
-                <label style="font-size:13px; color:var(--sub); font-weight:800; display:block; margin-bottom:6px;">습관 항목</label>
-
-                <h3 style="font-size:19px; font-weight:800; margin-bottom:20px;">하루 물 2L 마시기 💧</h3>
-
-                <textarea placeholder="오늘의 실천 내용을 남겨주세요." style="width:100%; height:200px; border:none; background:transparent; font-size:16px; outline:none; resize:none; line-height:1.6;"></textarea>
-
-            </div>
-
-        </section>
+      </section>
 
 ​
+
+      <section id="v-settings" class="view">
+
+        <header class="sub-header">
+
+          <button class="back-btn" onclick="go('v-home')">←</button>
+
+          <h2>내 정보 수정</h2>
+
+        </header>
+
+        <div class="inner">
+
+          <div class="profile-edit">
+
+            <div class="avatar">👤</div>
+
+            <button class="txt-link">사진 변경</button>
+
+          </div>
+
+          <div class="form-group">
+
+            <label>닉네임</label>
+
+            <input type="text" value="예지 (YEDI)" class="input-base" />
+
+          </div>
+
+          <div class="form-group">
+
+            <label>이메일</label>
+
+            <input
+
+              type="text"
+
+              value="yedi@naver.com"
+
+              class="input-base"
+
+              disabled
+
+            />
+
+          </div>
+
+          <button class="btn-full fixed-bottom" onclick="go('v-home')">
+
+            저장하기
+
+          </button>
+
+        </div>
+
+      </section>
+
+​
+
+      <section id="v-report" class="view">
+
+        <header class="sub-header">
+
+          <button class="back-btn" onclick="go('v-home')">←</button>
+
+          <h2>패턴 분석</h2>
+
+        </header>
+
+        <div class="inner">
+
+          <div class="report-box">
+
+            <h4>가장 취약한 시점</h4>
+
+            <p class="purple">목요일 오후 8시</p>
+
+          </div>
+
+          <div class="graph-area">
+
+            <div class="bar-chart">
+
+              <div class="b-item" style="height: 90%"></div>
+
+              <div class="b-item" style="height: 60%"></div>
+
+              <div class="b-item danger" style="height: 20%"></div>
+
+            </div>
+
+          </div>
+
+          <button
+
+            class="btn-full fixed-bottom"
+
+            style="background: #333"
+
+            onclick="go('v-home')"
+
+          >
+
+            다시 도전하기
+
+          </button>
+
+        </div>
+
+      </section>
 
     </div>
 
 ​
 
-    <nav class="gnb" id="gnb">
+    <script>
 
-        <div class="nav-tab active" id="tab-home" onclick="tab('v-home')"><span>🏠</span><label>홈</label></div>
+      function go(id) {
 
-        <div class="nav-tab"><span>📊</span><label>통계</label></div>
+        document
 
-        <div class="nav-tab" id="tab-mypage" onclick="tab('v-mypage')"><span>👤</span><label>마이</label></div>
+          .querySelectorAll(".view")
 
-    </nav>
+          .forEach((v) => v.classList.remove("active"));
 
-</div>
+        document.getElementById(id).classList.add("active");
 
-​
+      }
 
-<script>
+      function simulateDanger() {
 
-    // 화면 전환 함수
+        const card = document.getElementById("status-card");
 
-    function go(id) {
+        const text = document.getElementById("status-text");
 
-        // 모든 뷰 숨기기
+        const alertBox = document.getElementById("alert-box");
 
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        card.classList.replace("normal", "danger");
 
-        
+        text.innerText = "작심삼일 위기! ⚠️";
 
-        // 대상 뷰 보이기
+        alertBox.classList.remove("hide");
 
-        const target = document.getElementById(id);
+      }
 
-        if (target) {
+    </script>
 
-            target.classList.add('active');
-
-            // 화면 전환 시 스크롤 위치를 맨 위로 리셋
-
-            document.getElementById('scroll-area').scrollTop = 0;
-
-        }
-
-​
-
-        // GNB 노출 로직 (홈과 마이페이지에서만 보임)
-
-        const gnb = document.getElementById('gnb');
-
-        if (id === 'v-home' || id === 'v-mypage') {
-
-            gnb.style.display = 'flex';
-
-        } else {
-
-            gnb.style.display = 'none';
-
-        }
-
-    }
-
-​
-
-    // GNB 탭 클릭 함수
-
-    function tab(id) {
-
-        // 탭 아이콘 색상 변경
-
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-
-        if (id === 'v-home') document.getElementById('tab-home').classList.add('active');
-
-        if (id === 'v-mypage') document.getElementById('tab-mypage').classList.add('active');
-
-        
-
-        go(id);
-
-    }
-
-​
-
-    // 초기 구동: 스플래시 1.5초 보여준 후 홈으로 이동
-
-    window.onload = () => {
-
-        setTimeout(() => go('v-home'), 1500);
-
-    };
-
-</script>
-
-​
-
-</body>
+  </body>
 
 </html>
+
+​
