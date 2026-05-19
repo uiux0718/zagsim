@@ -266,3 +266,24 @@ export default function AdvancedZagsimFarm() {
     </div>
   );
 }
+function renderGrid(isWithered = false) {
+  const grid = document.getElementById("grid");
+  // 홈 화면이 아닐 때는 잔디 그리기를 건너뛰도록 방어 코드 추가
+  if (!grid) return; 
+  
+  grid.innerHTML = "";
+  for (let i = 0; i < 7; i++) {
+    const cell = document.createElement("div");
+    const isActive = i < state.streak % 8;
+    cell.style.cssText = `aspect-ratio: 1; border-radius: 8px; background: ${isActive ? (isWithered ? "var(--withered)" : "var(--grass)") : "#ffffff"};`;
+    grid.appendChild(cell);
+  }
+  
+  // 엘리먼트가 존재할 때만 텍스트를 변경하도록 수정
+  const streakTxt = document.getElementById("streak-txt");
+  if (streakTxt) {
+    streakTxt.innerText = isWithered
+      ? "잔디가 시들고 있어요"
+      : `연속 수확 ${state.streak}회차`;
+  }
+}
