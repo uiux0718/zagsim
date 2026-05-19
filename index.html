@@ -188,4 +188,539 @@
         border-radius: 50%;
       }
       .habit-name {
-        font-weight:
+        font-weight: 800;
+        font-size: 15px;
+        color: var(--text);
+      }
+
+      /* 버튼 시스템 */
+      .btn-primary {
+        width: 100%;
+        padding: 22px;
+        border-radius: 22px;
+        border: none;
+        background: var(--primary);
+        color: white;
+        font-weight: 800;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .btn-primary:active {
+        opacity: 0.8;
+        transform: scale(0.98);
+      }
+      .btn-text {
+        background: none;
+        border: none;
+        color: var(--gray);
+        padding: 16px;
+        cursor: pointer;
+        font-size: 14px;
+        width: 100%;
+        font-weight: 600;
+      }
+
+      /* 하단 내비게이션 바 */
+      .bottom-nav {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 92px;
+        border-top: 1.5px solid var(--light-gray);
+        display: none;
+        justify-content: space-around;
+        padding-top: 14px;
+        background: white;
+        z-index: 100;
+      }
+      .nav-item {
+        text-align: center;
+        color: var(--gray);
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        flex: 1;
+      }
+      .nav-item.active {
+        color: var(--primary);
+      }
+      .nav-dot {
+        width: 6px;
+        height: 6px;
+        background: currentColor;
+        border-radius: 50%;
+        margin: 0 auto 6px;
+      }
+
+      /* 알림 설정 카드 및 토글 스위치 */
+      .noti-card {
+        background-color: var(--light-gray);
+        border-radius: 20px;
+        padding: 20px 24px;
+        margin-top: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.2s;
+      }
+      .noti-card > div:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        text-align: left;
+      }
+      .noti-card h4 {
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--text);
+      }
+      .toggle {
+        width: 52px;
+        height: 31px;
+        background: #e5e5ea;
+        border-radius: 16px;
+        position: relative;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .toggle.on {
+        background: var(--primary);
+      }
+      .toggle-handle {
+        width: 27px;
+        height: 27px;
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        transition: 0.3s;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+      }
+      .toggle.on .toggle-handle {
+        left: 23px;
+      }
+
+      /* 팝업 모달 */
+      .overlay {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        padding: 24px;
+      }
+      .modal {
+        background: white;
+        padding: 36px 24px;
+        border-radius: 32px;
+        width: 100%;
+        text-align: center;
+        animation: slideUp 0.3s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      #toast {
+        position: absolute;
+        bottom: 120px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 16px 28px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 600;
+        display: none;
+        z-index: 2000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="iphone">
+      <section id="s-login" class="screen active">
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+          <div class="logo-container">
+            <img src="logo.png" alt="작심농장" class="main-logo" />
+            <span class="logo-text">작심농장</span>
+          </div>
+          <h1 style="font-size: 30px; font-weight: 900; margin-bottom: 12px; letter-spacing: -1px;">
+            환영합니다
+          </h1>
+          <p style="color: var(--gray); margin-bottom: 40px; font-weight: 500">
+            오늘의 수확을 위해 로그인해주세요.
+          </p>
+
+          <div class="input-group">
+            <label>이메일</label>
+            <input type="email" placeholder="이메일 주소를 입력하세요" />
+          </div>
+          <div class="input-group">
+            <label>비밀번호</label>
+            <input type="password" placeholder="비밀번호를 입력하세요" />
+          </div>
+
+          <button class="btn-primary" onclick="go('s-home')">
+            수확 시작하기
+          </button>
+          <button class="btn-text" onclick="go('s-join')">
+            계정이 없으신가요? 회원가입
+          </button>
+        </div>
+      </section>
+
+      <section id="s-join" class="screen">
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+          <div class="header" style="margin-bottom: 40px">
+            <span class="header-action" onclick="go('s-login')">이전으로</span>
+          </div>
+          <h1 style="font-size: 30px; font-weight: 900; margin-bottom: 12px">
+            농장주 등록
+          </h1>
+          <p style="color: var(--gray); margin-bottom: 40px">
+            당신만의 특별한 농장을 만들어보세요.
+          </p>
+          <div class="input-group">
+            <label>이름</label><input type="text" placeholder="이름 입력" />
+          </div>
+          <div class="input-group">
+            <label>이메일</label><input type="email" placeholder="이메일 입력" />
+          </div>
+          <div class="input-group">
+            <label>비밀번호</label><input type="password" placeholder="8자 이상 입력" />
+          </div>
+          <button class="btn-primary" onclick="go('s-login')">등록 완료</button>
+        </div>
+      </section>
+
+      <section id="s-home" class="screen">
+        <header class="header">
+          <div class="logo-area" onclick="openRules()" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <img src="logo.png" alt="logo" style="height: 28px" />
+            <span style="font-weight: 900; font-size: 16px">작심농장</span>
+          </div>
+          <span class="header-action" onclick="go('s-noti')">알림설정</span>
+        </header>
+
+        <div class="dashboard-card">
+          <span class="status-badge" id="val-land-home">관리 중인 토지 1</span>
+          <h2 id="streak-txt" style="font-size: 22px; font-weight: 900; margin-bottom: 20px">
+            연속 수확 0회차
+          </h2>
+          <div id="grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;"></div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 0 4px;">
+          <h3 style="font-size: 17px; font-weight: 800">나의 기록 카드</h3>
+          <span class="header-action" onclick="openAddModal()">카드 추가</span>
+        </div>
+
+        <div class="habit-grid" id="habit-container">
+          <div class="habit-card" onclick="harvest('물 마시기')">
+            <div class="habit-icon-box"><div class="habit-dot"></div></div>
+            <p class="habit-name">물 마시기</p>
+          </div>
+          <div class="habit-card" onclick="harvest('영양제')">
+            <div class="habit-icon-box"><div class="habit-dot"></div></div>
+            <p class="habit-name">영양제</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="s-noti" class="screen">
+        <header class="header">
+          <span class="header-action" onclick="go('s-home')">홈으로</span>
+          <span class="header-title">알림 설정</span>
+          <div style="width: 40px"></div>
+        </header>
+        <div style="margin-top: 10px">
+          <div class="noti-card">
+            <div>
+              <h4>수확 리마인더</h4>
+              <p style="font-size: 12px; color: var(--gray); margin-top: 4px">
+                매일 잊지 않도록 푸시를 보냅니다
+              </p>
+            </div>
+            <div class="toggle" id="t-remind" onclick="toggleNoti('remind')">
+              <div class="toggle-handle"></div>
+            </div>
+          </div>
+          <div class="noti-card">
+            <div>
+              <h4>패널티 경고</h4>
+              <p style="font-size: 12px; color: var(--gray); margin-top: 4px">
+                3일간 미수확 시 경고 알림을 보냅니다
+              </p>
+            </div>
+            <div class="toggle" id="t-penalty" onclick="toggleNoti('penalty')">
+              <div class="toggle-handle"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="s-mypage" class="screen">
+        <header class="header">
+          <span class="header-title" style="font-size: 22px; font-weight: 900">내 정보</span>
+        </header>
+        <div style="display: flex; gap: 12px; margin-bottom: 30px">
+          <div style="flex: 1; background: var(--primary-soft); padding: 24px; border-radius: 28px; text-align: center;">
+            <span style="font-size: 28px; font-weight: 900; color: var(--primary)" id="val-total">0</span>
+            <p style="font-size: 12px; color: var(--gray); margin-top: 6px; font-weight: 700;">
+              총 수확
+            </p>
+          </div>
+          <div style="flex: 1; background: var(--light-gray); padding: 24px; border-radius: 28px; text-align: center;">
+            <span style="font-size: 28px; font-weight: 900" id="val-land">1</span>
+            <p style="font-size: 12px; color: var(--gray); margin-top: 6px; font-weight: 700;">
+              보유 토지
+            </p>
+          </div>
+        </div>
+        <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 16px; padding-left: 4px;">
+          수확 타임라인
+        </h3>
+        <div id="history-list" style="flex: 1; overflow-y: auto; padding-bottom: 20px"></div>
+      </section>
+
+      <div id="add-modal" class="overlay" onclick="closeAddModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h2 style="font-size: 20px; font-weight: 900; margin-bottom: 24px">
+            새 기록 카드 만들기
+          </h2>
+          <div class="input-group" style="text-align: left">
+            <label>습관 이름</label>
+            <input type="text" id="habit-input" placeholder="예: 독서하기" />
+          </div>
+          <button class="btn-primary" onclick="createNewHabit()">
+            카드 생성
+          </button>
+          <button class="btn-text" onclick="closeAddModal()">
+            다음에 하기
+          </button>
+        </div>
+      </div>
+
+      <div id="rules-modal" class="overlay" onclick="closeRules()">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h2 style="margin-bottom: 20px; font-weight: 900">작심농장 수칙</h2>
+          <div style="text-align: left; font-size: 14px; line-height: 1.8; color: #555; margin-bottom: 30px; background: var(--light-gray); padding: 20px; border-radius: 20px;">
+            - 매일 기록하면 잔디가 한 칸씩 자라납니다.<br />
+            - 3일간 수확 기록이 없으면 잔디가 시들게 됩니다.<br />
+            - 30회 수확마다 새로운 토지를 보상받습니다.
+          </div>
+          <button class="btn-primary" onclick="closeRules()">알겠습니다</button>
+        </div>
+      </div>
+
+      <nav class="bottom-nav" id="main-nav">
+        <div class="nav-item active" onclick="go('s-home')">
+          <div class="nav-dot"></div>
+          홈
+        </div>
+        <div class="nav-item" onclick="go('s-mypage')">
+          <div class="nav-dot" style="opacity: 0"></div>
+          내 정보
+        </div>
+      </nav>
+
+      <div id="toast">메시지</div>
+    </div>
+
+    <script>
+      // 1. 상태 객체 정의 (LocalStorage 데이터 불러오기 또는 기본값 형성)
+      let state = JSON.parse(localStorage.getItem('zagsim_farm_state')) || {
+        total: 0,
+        lands: 1,
+        streak: 0,
+        history: [],
+        lastHarvest: new Date().toISOString(),
+        notiRemind: true,
+        notiPenalty: true,
+      };
+
+      function getLastHarvestDate() {
+        return new Date(state.lastHarvest);
+      }
+
+      function saveState() {
+        localStorage.setItem('zagsim_farm_state', JSON.stringify(state));
+      }
+
+      // 2. 화면 이동 제어 함수
+      function go(id) {
+        if (id === 's-home' && document.getElementById('s-login').classList.contains('active')) {
+          const email = document.querySelector('#s-login input[type="email"]').value;
+          if (!email.includes('@')) {
+            showToast("올바른 이메일 형식을 입력해주세요.");
+            return;
+          }
+        }
+
+        document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+
+        const isAuth = id === "s-login" || id === "s-join";
+        document.getElementById("main-nav").style.display = isAuth ? "none" : "flex";
+
+        const navItems = document.querySelectorAll(".nav-item");
+        if (id === "s-home") {
+          navItems[0].classList.add("active");
+          navItems[1].classList.remove("active");
+          navItems[0].querySelector(".nav-dot").style.opacity = 1;
+          navItems[1].querySelector(".nav-dot").style.opacity = 0;
+          checkSystem();
+        } else if (id === "s-mypage") {
+          navItems[1].classList.add("active");
+          navItems[0].classList.remove("active");
+          navItems[1].querySelector(".nav-dot").style.opacity = 1;
+          navItems[0].querySelector(".nav-dot").style.opacity = 0;
+          renderMypage();
+        } else if (id === "s-noti") {
+          renderNotiToggleUI();
+        }
+      }
+
+      // 3. 커스텀 습관 생성 함수
+      function createNewHabit() {
+        const input = document.getElementById("habit-input");
+        const name = input.value.trim();
+        if (!name) return;
+
+        const container = document.getElementById("habit-container");
+        const card = document.createElement("div");
+        card.className = "habit-card";
+        card.onclick = () => harvest(name);
+        card.innerHTML = `<div class="habit-icon-box"><div class="habit-dot"></div></div><p class="habit-name">${name}</p>`;
+
+        container.appendChild(card);
+        input.value = "";
+        closeAddModal();
+        showToast("기록 카드가 추가되었습니다.");
+      }
+
+      // 4. 습관 수확 처리 함수
+      function harvest(name) {
+        state.total++;
+        state.streak++;
+        state.lastHarvest = new Date().toISOString();
+        if (state.total > 0 && state.total % 30 === 0) state.lands++;
+
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+        state.history.unshift({
+          name,
+          time: `${now.getMonth() + 1}월 ${now.getDate()}일 ${hours}:${minutes}`,
+        });
+        
+        saveState();
+        showToast(`${name} 수확 완료!`);
+        checkSystem();
+      }
+
+      // 5. 시스템 시간 체크 및 시들음 여부 검사
+      function checkSystem() {
+        const hours = (new Date() - getLastHarvestDate()) / (1000 * 60 * 60);
+        const isWithered = hours >= 72;
+        renderGrid(isWithered);
+      }
+
+      // 6. 메인 대시보드 잔디 격자 렌더링 함수
+      function renderGrid(isWithered = false) {
+        const grid = document.getElementById("grid");
+        if (!grid) return;
+        grid.innerHTML = "";
+        
+        let activeCount = state.streak % 7;
+        if (state.streak > 0 && activeCount === 0) {
+          activeCount = 7; 
+        }
+
+        for (let i = 0; i < 7; i++) {
+          const cell = document.createElement("div");
+          const isActive = i < activeCount;
+          cell.style.cssText = `aspect-ratio: 1; border-radius: 8px; background: ${isActive ? (isWithered ? "var(--withered)" : "var(--grass)") : "#ffffff"}; border: 1px solid var(--light-gray);`;
+          grid.appendChild(cell);
+        }
+        
+        document.getElementById("streak-txt").innerText = isWithered
+          ? "잔디가 시들고 있어요"
+          : `연속 수확 ${state.streak}회차`;
+        document.getElementById("val-land-home").innerText = `관리 중인 토지 ${state.lands}`;
+      }
+
+      // 7. 마이페이지 정보 갱신 함수
+      function renderMypage() {
+        document.getElementById("val-total").innerText = state.total;
+        document.getElementById("val-land").innerText = state.lands;
+        const list = document.getElementById("history-list");
+        list.innerHTML =
+          state.history
+            .map(
+              (h) => `
+            <div style="background:var(--light-gray); padding:20px; border-radius:20px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:800; font-size:15px;">${h.name}</span>
+                <span style="font-size:12px; color:var(--gray); font-weight:600;">${h.time}</span>
+            </div>
+        `,
+            )
+            .join("") ||
+          '<p style="text-align:center; color:var(--gray); margin-top:40px; font-weight:600;">아직 수확 기록이 없습니다.</p>';
+      }
+
+      // 8. 알림 설정 토글 동기화 UI 제어 함수
+      function renderNotiToggleUI() {
+        const remindToggle = document.getElementById("t-remind");
+        const penaltyToggle = document.getElementById("t-penalty");
+
+        if (state.notiRemind) remindToggle.classList.add("on");
+        else remindToggle.classList.remove("on");
+
+        if (state.notiPenalty) penaltyToggle.classList.add("on");
+        else penaltyToggle.classList.remove("on");
+      }
+
+      function toggleNoti(type) {
+        const target = type === "remind" ? "notiRemind" : "notiPenalty";
+        state[target] = !state[target];
+        document.getElementById(`t-${type}`).classList.toggle("on");
+        saveState();
+      }
+
+      // 모달 및 토스트 헬퍼 함수
+      function openAddModal() { document.getElementById("add-modal").style.display = "flex"; }
+      function closeAddModal() { document.getElementById("add-modal").style.display = "none"; }
+      function openRules() { document.getElementById("rules-modal").style.display = "flex"; }
+      function closeRules() { document.getElementById("rules-modal").style.display = "none"; }
+      
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.innerText = msg;
+        t.style.display = "block";
+        setTimeout(() => (t.style.display = "none"), 2000);
+      }
+
+      // 첫 구동 시 격자 로드
+      checkSystem();
+    </script>
+  </body>
+</html>
