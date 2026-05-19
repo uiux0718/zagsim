@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>작심농장 Case Study</title>
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+    <style>
+      :root {
+        --primary: #7c6dff;
+        --primary-light: #f0edff;
+        --black: #1c1c1e;
+        --white: #ffffff;
+        --gray-bg: #f8f7f2;
+        --gray-text: #4a4a4a;
+        --border: #eeeeee;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Pretendard",
+          -apple-system,
+          sans-serif;
+        background-color: var(--gray-bg);
+        color: var(--black);
+        line-height: 1.7;
+        word-break: keep-all;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 60px 24px;
+      }
+
+      .label {
+        color: var(--primary);
+        font-weight: 800;
+        font-size: 0.9rem;
+        letter-spacing: 0.1em;
+        margin-bottom: 12px;
+        display: block;
+      }
+
+      .card {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        margin-bottom: 40px;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+      }
+      h3 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+      p {
+        color: var(--gray-text);
+        margin-bottom: 15px;
+      }
+
+      /* --- USER FLOW (가로 스크롤로 선명하게) --- */
+      .flow-viewer {
+        width: 100%;
+        background: #fdfdfd;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        overflow-x: auto;
+        margin-top: 20px;
+        cursor: grab;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .flow-viewer img {
+        min-width: 1400px; /* 고해상도 유지를 위해 최소 너비 확보 */
+        width: 100%;
+        height: auto;
+        display: block;
+        image-rendering: -webkit-optimize-contrast;
+      }
+
+      /* --- UI DESIGN --- */
+      .ui-main-showcase {
+        margin-top: 40px;
+        text-align: center;
+      }
+      .ui-main-showcase img {
+        max-width: 100%;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      /* --- APP DEMO (영상 나란히 배치) --- */
+      .video-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* 가로로 2개 배치 */
+        gap: 24px;
+        margin-top: 20px;
+      }
+
+      .video-card {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        text-align: center;
+      }
+
+      .iphone-frame {
+        position: relative;
+        width: 100%;
+        padding-bottom: 177.78%; /* 9:16 비c율 */
+        background: #000;
+        border-radius: 30px;
+        overflow: hidden;
+        border: 8px solid #1c1c1e;
+        margin-top: 15px;
+      }
+
+      .iphone-frame iframe {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+      }
+
+      /* 반응형: 모바일에서는 다시 세로로 */
+      @media (max-width: 850px) {
+        .video-grid {
+          grid-template-columns: 1fr;
+        }
+        .container {
+          padding: 40px 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1 style="font-size: 2.8rem; font-weight: 900; margin-bottom: 40px">
+          작심농장 Case Study
+        </h1>
+      </header>
+
+      <section>
+        <span class="label">01. PERSONA</span>
+        <div
+          class="card"
+          style="display: flex; align-items: center; gap: 40px; flex-wrap: wrap"
+        >
+          <img
+            src="personna.png"
+            alt="Persona"
+            style="width: 300px; border-radius: 16px"
+          />
+          <div style="flex: 1; min-width: 300px">
+            <h2>의욕은 앞서지만<br />꾸준함이 어려운 취준생</h2>
+            <p>
+              <strong>Goal:</strong> 오늘 하루의 성공을 시각적으로 확인하며
+              자신감을 회복하고 싶음
+            </p>
+            <p>
+              <strong>Pain Point:</strong> 기록을 한 번이라도 놓치면 느껴지는
+              무력감 때문에 앱을 아예 삭제해버림
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <span class="label">02. USER FLOW</span>
+        <div class="card">
+          <h2>수평적이고 직관적인 서비스 구조</h2>
+          <p>
+            사용자가 느끼는 심리적 부채감을 최소화하기 위해 서비스 구조를
+            수평적으로 단순화했습니다.
+          </p>
+          <div class="flow-viewer">
+            <img src="user.png" alt="작심농장 User Flow" />
+          </div>
+          <p
+            style="
+              text-align: center;
+              font-size: 0.85rem;
+              color: #999;
+              margin-top: 12px;
+            "
+          >
+            좌우로 스크롤하여 상세 플로우를 확인하세요.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <span class="label">03. UI DESIGN</span>
+        <div class="card">
+          <h2>사용자 경험을 고려한 인터페이스</h2>
+
+          <div class="ui-main-showcase">
+            <h3>Entry Experience</h3>
+            <p>빠른 진입을 통해 초기 이탈을 방지하는 로그인 화면</p>
+            <img src="uidesign.png" alt="Entry UI" />
+          </div>
+
+          <div style="margin-top: 60px"></div>
+
+          <div class="ui-main-showcase">
+            <h3>Core Functionality</h3>
+            <p>메인 농장 상태 및 기록 관리 기능</p>
+            <img src="uidesign2.png" alt="Core UI" />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <span class="label">04. APP DEMO</span>
+        <div class="video-grid">
+          <div class="video-card">
+            <h3>Short Promo Film</h3>
+            <p style="font-size: 0.9rem; color: #777">핵심 컨셉 홍보 영상</p>
+            <div class="iphone-frame">
+              <iframe
+                src="https://www.youtube.com/embed/HE7IURwIO5g"
+                frameborder="0"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </div>
+
+          <div class="video-card">
+            <h3>App Flow Demo</h3>
+            <p style="font-size: 0.9rem; color: #777">전체 서비스 흐름 시연</p>
+            <div class="iphone-frame">
+              <iframe
+                src="https://www.youtube.com/embed/zMC7r1lb_RI"
+                frameborder="0"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
