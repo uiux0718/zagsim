@@ -1,1 +1,727 @@
+:root {
+  --bg-color: #f8f8f8;
+  --text-main: #1a1a1a;
+
+  --point-green: #00a86b;
+  --point-purple: #8e44ad;
+  --point-yellow: #ffd700;
+  --point-deepgreen: #003c32;
+
+  --transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--text-main);
+  font-family: "Pretendard", sans-serif;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Navigation */
+
+.navbar {
+  position: sticky;
+  top: 0;
+
+  padding: 24px 0;
+
+  background: rgba(248, 248, 248, 0.9);
+
+  border-bottom: 1px solid #ddd;
+
+  backdrop-filter: blur(10px);
+
+  z-index: 1000;
+}
+
+.nav-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.menu a {
+  margin-left: 32px;
+
+  font-size: 0.9rem;
+  font-weight: 700;
+
+  transition: var(--transition);
+}
+
+.menu a:hover {
+  color: var(--point-green);
+}
+
+/* Hero */
+
+.hero {
+  padding: 120px 0 90px;
+
+  border-bottom: 2px solid #000;
+}
+
+.hero-header-top {
+  display: flex;
+  justify-content: space-between;
+
+  margin-bottom: 48px;
+
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.hero-title {
+  max-width: 900px;
+
+  font-size: clamp(3rem, 8vw, 5.8rem);
+
+  line-height: 1.05;
+
+  font-weight: 900;
+
+  letter-spacing: -3px;
+
+  margin-bottom: 72px;
+}
+
+.hero-sub {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 24px;
+
+  border-top: 1px solid #000;
+
+  padding-top: 24px;
+}
+
+.sub-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+
+  color: #888;
+
+  margin-bottom: 8px;
+}
+
+.hero-sub p:not(.sub-label) {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+/* About */
+
+.profile {
+  padding: 100px 0;
+
+  background: #fff;
+
+  border-bottom: 1px solid #eee;
+}
+
+.section-header {
+  padding-bottom: 32px;
+
+  border-bottom: 1px solid #000;
+
+  margin-bottom: 48px;
+}
+
+.label {
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.profile-intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+
+  gap: 64px;
+}
+
+.identity-card h2 {
+  font-size: 2.3rem;
+
+  font-weight: 900;
+
+  margin-bottom: 24px;
+}
+
+.eng {
+  font-size: 1.2rem;
+
+  color: #aaa;
+
+  margin-left: 8px;
+}
+
+.contact-list p {
+  margin-bottom: 12px;
+
+  font-size: 1rem;
+}
+
+.main-statement {
+  font-size: 2rem;
+
+  line-height: 1.45;
+
+  font-weight: 800;
+
+  margin-bottom: 32px;
+}
+
+.sub-statement {
+  max-width: 650px;
+
+  font-size: 1.1rem;
+
+  color: #555;
+}
+
+/* Works */
+
+.archive-section {
+  padding: 100px 0;
+}
+
+.work-item {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+
+  gap: 40px;
+
+  padding: 80px 0;
+
+  border-bottom: 1px solid #ddd;
+
+  cursor: pointer;
+
+  transition: var(--transition);
+
+  opacity: 0;
+  transform: translateY(40px);
+
+  will-change: transform, opacity;
+}
+
+.work-item.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.work-item:hover {
+  padding-left: 20px;
+}
+
+.highlight-green:hover {
+  border-left: 12px solid var(--point-green);
+}
+
+.highlight-purple:hover {
+  border-left: 12px solid var(--point-purple);
+}
+
+.work-num {
+  font-size: 1.8rem;
+  font-weight: 900;
+}
+
+.work-cat {
+  font-size: 0.8rem;
+
+  font-weight: 700;
+
+  color: #888;
+}
+
+.work-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+
+  font-weight: 900;
+
+  margin: 12px 0;
+}
+
+.work-desc {
+  max-width: 680px;
+
+  margin-bottom: 24px;
+
+  font-size: 1.1rem;
+
+  color: #444;
+}
+
+.work-tags {
+  margin-bottom: 32px;
+
+  font-size: 0.9rem;
+
+  font-weight: 700;
+
+  color: #999;
+}
+
+.btn-link {
+  display: inline-block;
+
+  border-bottom: 2px solid #000;
+
+  padding-bottom: 4px;
+
+  font-weight: 800;
+}
+
+/* Archive Grid */
+
+.archive-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 40px;
+
+  margin-top: 80px;
+}
+
+.small-card {
+  background: #fff;
+
+  border: 1px solid #eee;
+
+  padding: 40px;
+
+  transition: var(--transition);
+
+  opacity: 0;
+  transform: translateY(40px);
+
+  will-change: transform, opacity;
+}
+
+.small-card.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.small-card:hover {
+  transform: translateY(-12px);
+
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.card-thumb {
+  width: 100%;
+  height: 280px;
+
+  margin: 24px 0;
+
+  overflow: hidden;
+
+  border-radius: 4px;
+
+  background: #eee;
+}
+
+.card-thumb img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  filter: contrast(1.03) saturate(1.02);
+
+  transition: transform 0.6s ease;
+}
+
+.small-card:hover img {
+  transform: scale(1.08);
+}
+
+.strategy-summary {
+  padding-top: 20px;
+
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+  font-size: 0.85rem;
+
+  font-weight: 700;
+
+  color: #666;
+}
+
+/* Project Colors */
+
+.crunky-card {
+  background: var(--point-yellow);
+
+  border: none;
+}
+
+.j-estina-card {
+  background: var(--point-deepgreen);
+
+  color: #fff;
+
+  border: none;
+}
+
+.j-estina-card .strategy-summary {
+  border-top-color: rgba(255, 255, 255, 0.2);
+
+  color: #eee;
+}
+
+/* Footer */
+
+.footer {
+  padding: 120px 0 60px;
+
+  border-top: 1px solid #ddd;
+
+  text-align: center;
+}
+
+.footer p {
+  font-size: 0.85rem;
+
+  font-weight: 800;
+
+  color: #aaa;
+
+  letter-spacing: 1px;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+  .hero-title {
+    font-size: 3.5rem;
+
+    letter-spacing: -1px;
+  }
+
+  .hero-sub {
+    grid-template-columns: 1fr;
+
+    gap: 20px;
+  }
+
+  .profile-intro-grid {
+    grid-template-columns: 1fr;
+
+    gap: 40px;
+  }
+
+  .work-item {
+    grid-template-columns: 1fr;
+  }
+
+  .archive-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* ==========================================================================
+   CONTACT ME 모달 팝업 스타일
+   ========================================================================== */
+
+/* 모달 배경 (뒷배경 블러 처리 및 어둡게) */
+.contact-modal {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* 뒷배경 딤처리 */
+  backdrop-filter: blur(5px); /* 고급스러운 뒷배경 블러 효과 */
+  z-index: 9999; /* 화면 가장 위에 배치 */
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease; /* 부드러운 페이드 인/아웃 */
+}
+
+/* 모달이 활성화되었을 때 클래스 */
+.contact-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 피그마 디자인 모달 박스 구현 */
+.modal-content {
+  position: relative;
+  width: 90%;
+  max-width: 760px; /* 피그마 가로 비율 기준 */
+  background-color: #031e0c; /* 피그마 속성: 짙은 숲색/딥그린 */
+  border-radius: 4px; /* 정갈하고 날카로운 느낌의 미니멀 라운딩 */
+  padding: 80px 40px; /* 여유로운 상하좌우 내부 여백 */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  box-sizing: border-box;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+/* 모달 활성화 시 위로 자연스럽게 올라오는 효과 */
+.contact-modal.active .modal-content {
+  transform: translateY(0);
+}
+
+/* 우측 상단 닫기 버튼 */
+.modal-close-btn {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 32px;
+  font-weight: 300;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  color: #ffffff;
+}
+
+/* 메인 타이틀: CONTACT ME */
+.modal-title {
+  font-family: "Helvetica Neue", Arial, sans-serif; /* 모던 산세리프 */
+  font-size: 64px; /* 피그마 기준 크고 볼드한 서체 크기 */
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 2px;
+  margin: 0 0 48px 0;
+  text-transform: uppercase;
+}
+
+/* 정보 배치 레이아웃 */
+.modal-info-container {
+  display: inline-block;
+  text-align: left; /* 라벨과 값이 왼쪽 정렬되도록 */
+  max-width: 100%;
+}
+
+/* 각 정보 줄 (e-mail, mobile, github) */
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.info-row:last-child {
+  margin-bottom: 0; /* 마지막 행 마진 제거 */
+}
+
+/* 깃허브 아이콘이 들어간 특별한 행 조절 */
+.github-row {
+  margin-top: 32px; /* 깃허브는 다른 연락처와 살짝 간격 분리 */
+  position: relative;
+}
+
+/* 왼쪽 라벨 스타일 (e-mail, mobile) */
+.info-label {
+  display: inline-block;
+  width: 90px; /* 피그마 비율에 맞춘 너비 */
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 16px;
+  text-transform: lowercase; /* 소문자 통일 */
+}
+
+/* 오른쪽 정보 값 스타일 (텍스트 및 링크) */
+.info-value {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+  font-size: 16px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+/* 이메일이나 깃허브 링크에 마우스 올렸을 때 */
+a.info-value:hover {
+  color: #ffffff;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+/* 깃허브 아이콘 스타일 */
+.github-icon {
+  width: 24px;
+  height: 24px;
+  color: #ffffff;
+  margin-right: 20px; /* 피그마 시안 여백 구현 */
+  flex-shrink: 0;
+}
+
+/* 밑줄이 쳐진 링크 (깃허브 링크 밑줄 적용) */
+.link-underlined {
+  text-decoration: underline;
+  text-underline-offset: 4px; /* 밑줄 간격 디테일 */
+}
+
+/* ==========================================================================
+   모바일 반응형 (1024px 이하 패드 및 모바일)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    padding: 60px 24px;
+  }
+
+  .modal-title {
+    font-size: 44px; /* 모바일 크기에 맞춰 축소 */
+    margin-bottom: 36px;
+  }
+
+  .info-row {
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+
+  .info-label {
+    width: 75px;
+    font-size: 14px;
+  }
+
+  .info-value {
+    font-size: 14px;
+  }
+
+  .github-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 15px;
+  }
+}
+/* 스크롤 시 스르륵 나타나는 인터랙션용 초기 상태 */
+.small-card {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease,
+    background-color 0.4s ease;
+}
+
+/* 감지되었을 때 나타나는 클래스 */
+.small-card.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* 청년마음쉼터 섹션 전용 스타일 */
+.mind-shelter-section {
+  padding: 100px 0;
+  background-color: #fdfbf7; /* 캡처본의 크림색 배경 */
+  font-family: "Pretendard", sans-serif;
+}
+
+.ms-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.ms-section-tag {
+  font-weight: 900;
+  font-size: 0.85rem;
+  color: #bbb;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+/* 브랜드 스토리 카드 */
+.ms-story-card {
+  background: #fff;
+  padding: 60px;
+  border-radius: 60px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.03);
+  margin-bottom: 60px;
+}
+
+.ms-main-copy {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+/* 로고 타입 그리드 */
+.ms-logo-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+}
+
+.ms-logo-box {
+  background: #fff;
+  padding: 40px;
+  border-radius: 30px;
+  text-align: center;
+  border: 1px solid #f0f0f0;
+}
+
+.ms-logo-box img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.ms-label {
+  display: block;
+  margin-top: 15px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ccc;
+}
+
+/* 반응형 처리 */
+@media (max-width: 768px) {
+  .ms-logo-grid {
+    grid-template-columns: 1fr;
+  }
+  .ms-story-card {
+    padding: 40px 20px;
+  }
+  .ms-main-copy {
+    font-size: 1.5rem;
+  }
+}
 
