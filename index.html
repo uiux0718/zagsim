@@ -66,7 +66,7 @@
         z-index: 10;
       }
 
-      /* 로고 스타일 (업로드하신 일러스트 로고 적용) */
+      /* 로고 스타일 */
       .logo-container {
         display: flex;
         align-items: center;
@@ -105,7 +105,7 @@
         color: var(--text);
       }
 
-      /* 시안의 라운드 입력폼 */
+      /* 입력폼 */
       .input-group {
         margin-bottom: 20px;
       }
@@ -151,7 +151,7 @@
         margin-bottom: 16px;
       }
 
-      /* 시안의 습관 리스트 카드 UI */
+      /* 습관 리스트 카드 UI */
       .habit-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -221,7 +221,7 @@
         font-weight: 600;
       }
 
-      /* 하단 내비게이션 바 (시안 참조) */
+      /* 하단 내비게이션 바 */
       .bottom-nav {
         position: absolute;
         bottom: 0;
@@ -254,7 +254,28 @@
         margin: 0 auto 6px;
       }
 
-      /* 토글 스위치 */
+      /* 알림 설정 카드 및 토글 스위치 */
+      .noti-card {
+        background-color: var(--light-gray);
+        border-radius: 20px;
+        padding: 20px 24px;
+        margin-top: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.2s;
+      }
+      .noti-card > div:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        text-align: left;
+      }
+      .noti-card h4 {
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--text);
+      }
       .toggle {
         width: 52px;
         height: 31px;
@@ -335,26 +356,12 @@
   <body>
     <div class="iphone">
       <section id="s-login" class="screen active">
-        <div
-          style="
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-          "
-        >
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
           <div class="logo-container">
             <img src="logo.png" alt="작심농장" class="main-logo" />
             <span class="logo-text">작심농장</span>
           </div>
-          <h1
-            style="
-              font-size: 30px;
-              font-weight: 900;
-              margin-bottom: 12px;
-              letter-spacing: -1px;
-            "
-          >
+          <h1 style="font-size: 30px; font-weight: 900; margin-bottom: 12px; letter-spacing: -1px;">
             환영합니다
           </h1>
           <p style="color: var(--gray); margin-bottom: 40px; font-weight: 500">
@@ -380,14 +387,7 @@
       </section>
 
       <section id="s-join" class="screen">
-        <div
-          style="
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-          "
-        >
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
           <div class="header" style="margin-bottom: 40px">
             <span class="header-action" onclick="go('s-login')">이전으로</span>
           </div>
@@ -401,12 +401,10 @@
             <label>이름</label><input type="text" placeholder="이름 입력" />
           </div>
           <div class="input-group">
-            <label>이메일</label
-            ><input type="email" placeholder="이메일 입력" />
+            <label>이메일</label><input type="email" placeholder="이메일 입력" />
           </div>
           <div class="input-group">
-            <label>비밀번호</label
-            ><input type="password" placeholder="8자 이상 입력" />
+            <label>비밀번호</label><input type="password" placeholder="8자 이상 입력" />
           </div>
           <button class="btn-primary" onclick="go('s-login')">등록 완료</button>
         </div>
@@ -414,16 +412,7 @@
 
       <section id="s-home" class="screen">
         <header class="header">
-          <div
-            class="logo-area"
-            onclick="openRules()"
-            style="
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              cursor: pointer;
-            "
-          >
+          <div class="logo-area" onclick="openRules()" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
             <img src="logo.png" alt="logo" style="height: 28px" />
             <span style="font-weight: 900; font-size: 16px">작심농장</span>
           </div>
@@ -431,32 +420,14 @@
         </header>
 
         <div class="dashboard-card">
-          <span class="status-badge">관리 중인 토지 1</span>
-          <h2
-            id="streak-txt"
-            style="font-size: 22px; font-weight: 900; margin-bottom: 20px"
-          >
+          <span class="status-badge" id="val-land-home">관리 중인 토지 1</span>
+          <h2 id="streak-txt" style="font-size: 22px; font-weight: 900; margin-bottom: 20px">
             연속 수확 0회차
           </h2>
-          <div
-            id="grid"
-            style="
-              display: grid;
-              grid-template-columns: repeat(7, 1fr);
-              gap: 8px;
-            "
-          ></div>
+          <div id="grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;"></div>
         </div>
 
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            padding: 0 4px;
-          "
-        >
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 0 4px;">
           <h3 style="font-size: 17px; font-weight: 800">나의 기록 카드</h3>
           <span class="header-action" onclick="openAddModal()">카드 추가</span>
         </div>
@@ -482,27 +453,23 @@
         <div style="margin-top: 10px">
           <div class="noti-card">
             <div>
-              <h4 style="font-weight: 800">수확 리마인더</h4>
+              <h4>수확 리마인더</h4>
               <p style="font-size: 12px; color: var(--gray); margin-top: 4px">
                 매일 잊지 않도록 푸시를 보냅니다
               </p>
             </div>
-            <div class="toggle on" id="t-remind" onclick="toggleNoti('remind')">
+            <div class="toggle" id="t-remind" onclick="toggleNoti('remind')">
               <div class="toggle-handle"></div>
             </div>
           </div>
-          <div class="noti-card" style="margin-top: 12px">
+          <div class="noti-card">
             <div>
-              <h4 style="font-weight: 800">패널티 경고</h4>
+              <h4>패널티 경고</h4>
               <p style="font-size: 12px; color: var(--gray); margin-top: 4px">
                 3일간 미수확 시 경고 알림을 보냅니다
               </p>
             </div>
-            <div
-              class="toggle on"
-              id="t-penalty"
-              onclick="toggleNoti('penalty')"
-            >
+            <div class="toggle" id="t-penalty" onclick="toggleNoti('penalty')">
               <div class="toggle-handle"></div>
             </div>
           </div>
@@ -511,74 +478,26 @@
 
       <section id="s-mypage" class="screen">
         <header class="header">
-          <span class="header-title" style="font-size: 22px; font-weight: 900"
-            >내 정보</span
-          >
+          <span class="header-title" style="font-size: 22px; font-weight: 900">내 정보</span>
         </header>
         <div style="display: flex; gap: 12px; margin-bottom: 30px">
-          <div
-            style="
-              flex: 1;
-              background: var(--primary-soft);
-              padding: 24px;
-              border-radius: 28px;
-              text-align: center;
-            "
-          >
-            <span
-              style="font-size: 28px; font-weight: 900; color: var(--primary)"
-              id="val-total"
-              >0</span
-            >
-            <p
-              style="
-                font-size: 12px;
-                color: var(--gray);
-                margin-top: 6px;
-                font-weight: 700;
-              "
-            >
+          <div style="flex: 1; background: var(--primary-soft); padding: 24px; border-radius: 28px; text-align: center;">
+            <span style="font-size: 28px; font-weight: 900; color: var(--primary)" id="val-total">0</span>
+            <p style="font-size: 12px; color: var(--gray); margin-top: 6px; font-weight: 700;">
               총 수확
             </p>
           </div>
-          <div
-            style="
-              flex: 1;
-              background: var(--light-gray);
-              padding: 24px;
-              border-radius: 28px;
-              text-align: center;
-            "
-          >
-            <span style="font-size: 28px; font-weight: 900" id="val-land"
-              >1</span
-            >
-            <p
-              style="
-                font-size: 12px;
-                color: var(--gray);
-                margin-top: 6px;
-                font-weight: 700;
-              "
-            >
+          <div style="flex: 1; background: var(--light-gray); padding: 24px; border-radius: 28px; text-align: center;">
+            <span style="font-size: 28px; font-weight: 900" id="val-land">1</span>
+            <p style="font-size: 12px; color: var(--gray); margin-top: 6px; font-weight: 700;">
               보유 토지
             </p>
           </div>
         </div>
-        <h3
-          style="
-            font-size: 16px;
-            font-weight: 800;
-            margin-bottom: 16px;
-            padding-left: 4px;
-          "
-        >
+        <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 16px; padding-left: 4px;">
           수확 타임라인
         </h3>
-        <div
-          id="history-list"
-          style="flex: 1; overflow-y: auto; padding-bottom: 20px"
-        ></div>
+        <div id="history-list" style="flex: 1; overflow-y: auto; padding-bottom: 20px"></div>
       </section>
 
       <div id="add-modal" class="overlay" onclick="closeAddModal()">
@@ -602,18 +521,7 @@
       <div id="rules-modal" class="overlay" onclick="closeRules()">
         <div class="modal" onclick="event.stopPropagation()">
           <h2 style="margin-bottom: 20px; font-weight: 900">작심농장 수칙</h2>
-          <div
-            style="
-              text-align: left;
-              font-size: 14px;
-              line-height: 1.8;
-              color: #555;
-              margin-bottom: 30px;
-              background: var(--light-gray);
-              padding: 20px;
-              border-radius: 20px;
-            "
-          >
+          <div style="text-align: left; font-size: 14px; line-height: 1.8; color: #555; margin-bottom: 30px; background: var(--light-gray); padding: 20px; border-radius: 20px;">
             - 매일 기록하면 잔디가 한 칸씩 자라납니다.<br />
             - 3일간 수확 기록이 없으면 잔디가 시들게 됩니다.<br />
             - 30회 수확마다 새로운 토지를 보상받습니다.
@@ -637,44 +545,60 @@
     </div>
 
     <script>
-      let state = {
+      // 1. 상태 객체 정의 (LocalStorage 데이터 불러오기 또는 기본값 형성)
+      let state = JSON.parse(localStorage.getItem('zagsim_farm_state')) || {
         total: 0,
         lands: 1,
         streak: 0,
         history: [],
-        lastHarvest: new Date(),
+        lastHarvest: new Date().toISOString(),
         notiRemind: true,
         notiPenalty: true,
       };
 
+      function getLastHarvestDate() {
+        return new Date(state.lastHarvest);
+      }
+
+      function saveState() {
+        localStorage.setItem('zagsim_farm_state', JSON.stringify(state));
+      }
+
+      // 2. 화면 이동 제어 함수
       function go(id) {
-        document
-          .querySelectorAll(".screen")
-          .forEach((s) => s.classList.remove("active"));
+        if (id === 's-home' && document.getElementById('s-login').classList.contains('active')) {
+          const email = document.querySelector('#s-login input[type="email"]').value;
+          if (!email.includes('@')) {
+            showToast("올바른 이메일 형식을 입력해주세요.");
+            return;
+          }
+        }
+
+        document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
         document.getElementById(id).classList.add("active");
 
         const isAuth = id === "s-login" || id === "s-join";
-        document.getElementById("main-nav").style.display = isAuth
-          ? "none"
-          : "flex";
+        document.getElementById("main-nav").style.display = isAuth ? "none" : "flex";
 
-        // 내비게이션 활성화 표시
         const navItems = document.querySelectorAll(".nav-item");
         if (id === "s-home") {
           navItems[0].classList.add("active");
           navItems[1].classList.remove("active");
           navItems[0].querySelector(".nav-dot").style.opacity = 1;
           navItems[1].querySelector(".nav-dot").style.opacity = 0;
+          checkSystem();
         } else if (id === "s-mypage") {
           navItems[1].classList.add("active");
           navItems[0].classList.remove("active");
           navItems[1].querySelector(".nav-dot").style.opacity = 1;
           navItems[0].querySelector(".nav-dot").style.opacity = 0;
           renderMypage();
+        } else if (id === "s-noti") {
+          renderNotiToggleUI();
         }
-        checkSystem();
       }
 
+      // 3. 커스텀 습관 생성 함수
       function createNewHabit() {
         const input = document.getElementById("habit-input");
         const name = input.value.trim();
@@ -692,41 +616,59 @@
         showToast("기록 카드가 추가되었습니다.");
       }
 
+      // 4. 습관 수확 처리 함수
       function harvest(name) {
         state.total++;
         state.streak++;
-        state.lastHarvest = new Date();
+        state.lastHarvest = new Date().toISOString();
         if (state.total > 0 && state.total % 30 === 0) state.lands++;
 
         const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
         state.history.unshift({
           name,
-          time: `${now.getMonth() + 1}월 ${now.getDate()}일 ${now.getHours()}:${now.getMinutes()}`,
+          time: `${now.getMonth() + 1}월 ${now.getDate()}일 ${hours}:${minutes}`,
         });
+        
+        saveState();
         showToast(`${name} 수확 완료!`);
-        renderGrid();
+        checkSystem();
       }
 
+      // 5. 시스템 시간 체크 및 시들음 여부 검사
       function checkSystem() {
-        const hours = (new Date() - state.lastHarvest) / (1000 * 60 * 60);
+        const hours = (new Date() - getLastHarvestDate()) / (1000 * 60 * 60);
         const isWithered = hours >= 72;
         renderGrid(isWithered);
       }
 
+      // 6. 메인 대시보드 잔디 격자 렌더링 함수
       function renderGrid(isWithered = false) {
         const grid = document.getElementById("grid");
+        if (!grid) return;
         grid.innerHTML = "";
+        
+        let activeCount = state.streak % 7;
+        if (state.streak > 0 && activeCount === 0) {
+          activeCount = 7; 
+        }
+
         for (let i = 0; i < 7; i++) {
           const cell = document.createElement("div");
-          const isActive = i < state.streak % 8;
-          cell.style.cssText = `aspect-ratio: 1; border-radius: 8px; background: ${isActive ? (isWithered ? "var(--withered)" : "var(--grass)") : "#ffffff"};`;
+          const isActive = i < activeCount;
+          cell.style.cssText = `aspect-ratio: 1; border-radius: 8px; background: ${isActive ? (isWithered ? "var(--withered)" : "var(--grass)") : "#ffffff"}; border: 1px solid var(--light-gray);`;
           grid.appendChild(cell);
         }
+        
         document.getElementById("streak-txt").innerText = isWithered
           ? "잔디가 시들고 있어요"
           : `연속 수확 ${state.streak}회차`;
+        document.getElementById("val-land-home").innerText = `관리 중인 토지 ${state.lands}`;
       }
 
+      // 7. 마이페이지 정보 갱신 함수
       function renderMypage() {
         document.getElementById("val-total").innerText = state.total;
         document.getElementById("val-land").innerText = state.lands;
@@ -745,24 +687,31 @@
           '<p style="text-align:center; color:var(--gray); margin-top:40px; font-weight:600;">아직 수확 기록이 없습니다.</p>';
       }
 
+      // 8. 알림 설정 토글 동기화 UI 제어 함수
+      function renderNotiToggleUI() {
+        const remindToggle = document.getElementById("t-remind");
+        const penaltyToggle = document.getElementById("t-penalty");
+
+        if (state.notiRemind) remindToggle.classList.add("on");
+        else remindToggle.classList.remove("on");
+
+        if (state.notiPenalty) penaltyToggle.classList.add("on");
+        else penaltyToggle.classList.remove("on");
+      }
+
       function toggleNoti(type) {
         const target = type === "remind" ? "notiRemind" : "notiPenalty";
         state[target] = !state[target];
         document.getElementById(`t-${type}`).classList.toggle("on");
+        saveState();
       }
 
-      function openAddModal() {
-        document.getElementById("add-modal").style.display = "flex";
-      }
-      function closeAddModal() {
-        document.getElementById("add-modal").style.display = "none";
-      }
-      function openRules() {
-        document.getElementById("rules-modal").style.display = "flex";
-      }
-      function closeRules() {
-        document.getElementById("rules-modal").style.display = "none";
-      }
+      // 모달 및 토스트 헬퍼 함수
+      function openAddModal() { document.getElementById("add-modal").style.display = "flex"; }
+      function closeAddModal() { document.getElementById("add-modal").style.display = "none"; }
+      function openRules() { document.getElementById("rules-modal").style.display = "flex"; }
+      function closeRules() { document.getElementById("rules-modal").style.display = "none"; }
+      
       function showToast(msg) {
         const t = document.getElementById("toast");
         t.innerText = msg;
@@ -770,7 +719,8 @@
         setTimeout(() => (t.style.display = "none"), 2000);
       }
 
-      renderGrid();
+      // 첫 구동 시 격자 로드
+      checkSystem();
     </script>
   </body>
 </html>
