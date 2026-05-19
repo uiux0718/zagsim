@@ -1,81 +1,59 @@
 import React, { useState } from "react";
+// 작성하신 CSS 파일명이 'zagsim_style.css'라고 가정하고 임포트합니다.
+import "./zagsim_style.css"; 
 
-export default function AdvancedZagsimFarm() {
-  // --- 상태 관리 ---
-  const [currentScreen, setCurrentScreen] = useState("HOME"); // HOME, ADD, RECOVERY, SIGNUP
-  
-  // ... 기존 기획 데이터 및 handleRecord 로직 생략 ...
+export default function NotificationSettings() {
+  // 1. 각 알림별 On/Off 상태 정의 (기본값 설정)
+  const [remindNoti, setRemindNoti] = useState(false);   // 수확 리마인드 알림 (기본 꺼짐)
+  const [penaltyNoti, setPenaltyNoti] = useState(true);  // 농장 시듦 주의 알림 (기본 켜짐)
+
+  // 2. 상태 변경 토글 핸들러 함수
+  const handleToggleRemind = () => setRemindNoti((prev) => !prev);
+  const handleTogglePenalty = () => setPenaltyNoti((prev) => !prev);
 
   return (
-    <div style={{ maxWidth: "360px", margin: "0 auto", minHeight: "100vh", padding: "20px" }}>
-      
-      {/* 1. 홈 화면 */}
-      {currentScreen === "HOME" && (
-        <div>
-          {/* ... 기존 홈 화면 UI ... */}
-          
-          {/* 하단에 회원가입 버튼이 배치된다는 가정 */}
-          <button
-            onClick={() => setCurrentScreen("SIGNUP")} /* 클릭 시 SIGNUP 화면으로 상태 전환 */
-            style={{
-              width: "100%",
-              padding: "16px",
-              background: "#1c1c1e",
-              color: "#FFF",
-              border: "none",
-              borderRadius: "12px",
-              fontWeight: "bold",
-              marginTop: "12px",
-              cursor: "pointer"
-            }}
+    <div
+      style={{
+        maxWidth: "360px",
+        margin: "0 auto",
+        padding: "20px",
+        background: "#ffffff",
+      }}
+    >
+      {/* 알림 화면 컨테이너 영역 */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        
+        {/* 카드 1: 수확 리마인드 알림 */}
+        <div className="noti-card">
+          <div>
+            <h4>수확 리마인드 알림</h4>
+            <p>매일 저녁 잔디를 심을 수 있도록 리마인드해 드려요.</p>
+          </div>
+          {/* 리액트 상태(remindNoti)가 true일 때만 'on' 클래스가 동적으로 붙습니다 */}
+          <div
+            className={`toggle ${remindNoti ? "on" : ""}`}
+            onClick={handleToggleRemind}
           >
-            처음이신가요? 회원가입하기
-          </button>
-        </div>
-      )}
-
-      {/* 2. 기록 추가 화면 */}
-      {currentScreen === "ADD" && (
-        <div>{/* 기존 기록 추가 UI */}</div>
-      )}
-
-      {/* 3. 회복 UX 화면 */}
-      {currentScreen === "RECOVERY" && (
-        <div>{/* 기존 회복 UI */}</div>
-      )}
-
-      {/* 🚨 4. 회원가입 화면 (새로 추가되어야 하는 영역) */}
-      {currentScreen === "SIGNUP" && (
-        <div style={{ paddingTop: "40px" }}>
-          <div style={{ background: "#FFF", padding: "25px", borderRadius: "24px" }}>
-            <h3 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "20px" }}>회원가입</h3>
-            
-            {/* 임시 폼 요소 예시 */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              <input type="text" placeholder="아이디" style={{ padding: "12px", borderRadius: "8px", border: "1px solid #E5E5EA" }} />
-              <input type="password" placeholder="비밀번호" style={{ padding: "12px", borderRadius: "8px", border: "1px solid #E5E5EA" }} />
-              
-              <button
-                onClick={() => {
-                  alert("회원가입이 완료되었습니다!");
-                  setCurrentScreen("HOME"); // 가입 완료 후 홈으로 이동
-                }}
-                style={{ padding: "16px", background: "#7c6dff", color: "#fff", border: "none", borderRadius: "12px", fontWeight: "bold" }}
-              >
-                가입 완료
-              </button>
-              
-              <button
-                onClick={() => setCurrentScreen("HOME")} // 취소 시 홈으로 이동
-                style={{ padding: "12px", background: "none", color: "#8e8e93", border: "none" }}
-              >
-                취소하고 돌아가기
-              </button>
-            </div>
+            <div className="toggle-handle" />
           </div>
         </div>
-      )}
 
+        {/* 카드 2: 농장 시듦 주의 알림 */}
+        <div className="noti-card">
+          <div>
+            <h4>농장 시듦 주의 알림</h4>
+            <p>3회 연속 실패로 농장이 시들기 직전에 경고를 보내요.</p>
+          </div>
+          {/* 리액트 상태(penaltyNoti)가 true일 때만 'on' 클래스가 동적으로 붙습니다 */}
+          <div
+            className={`toggle ${penaltyNoti ? "on" : ""}`}
+            onClick={handleTogglePenalty}
+          >
+            <div className="toggle-handle" />
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }
