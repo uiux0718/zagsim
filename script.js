@@ -21,29 +21,34 @@ export default function AdvancedZagsimFarm() {
   const [isWithered, setIsWithered] = useState(false);
   const [randomMessage, setRandomMessage] = useState("");
   const [currentMission, setCurrentMission] = useState(recoveryMissions[0]);
+  
+  // 기존 5개에서 7칸 그리드로 가시성을 맞추기 위해 초기값 7개로 확장
   const [grassHistory, setGrassHistory] = useState([
-    true,
-    true,
-    true,
-    true,
-    true,
+    true, true, true, false, false, false, false
   ]);
+  const [streak, setStreak] = useState(3); // 연속 수확 횟수 상태 추가
 
   // --- 3. 핵심 로직 ---
   const handleRecord = (isSuccess) => {
     if (isSuccess) {
+      const nextStreak = streak + 1;
+      setStreak(nextStreak);
       setFailCount(0);
       setIsWithered(false);
-      setGrassHistory([true, ...grassHistory.slice(0, 4)]);
+      
+      // 앞에 성공(true)을 추가하고 최대 7개 유지
+      setGrassHistory([true, ...grassHistory.slice(0, 6)]);
       setCurrentScreen("HOME");
     } else {
+      setStreak(0); // 실패 시 연속 수확 초기화
       const nextFail = failCount + 1;
       setFailCount(nextFail);
-      setGrassHistory([false, ...grassHistory.slice(0, 4)]);
+      
+      // 앞에 실패(false)를 추가하고 최대 7개 유지
+      setGrassHistory([false, ...grassHistory.slice(0, 6)]);
 
       if (nextFail >= 3) {
         setIsWithered(true);
-        // 랜덤 위로 문구 및 회복 미션 세팅
         setRandomMessage(
           comfortMessages[Math.floor(Math.random() * comfortMessages.length)],
         );
@@ -94,196 +99,22 @@ export default function AdvancedZagsimFarm() {
             {isWithered ? "🥀" : "🌱"}
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              gap: "8px",
-              background: "#FFF",
-              padding: "15px",
-              borderRadius: "16px",
-              marginBottom: "20px",
-            }}
-          >
-            {grassHistory.map((status, i) => (
-              <div
-                key={i}
-                style={{
-                  flex: 1,
-                  height: "25px",
-                  borderRadius: "6px",
-                  background: status ? "#5C5CFF" : "#D1D1D1",
-                }}
-              />
-            ))}
-          </div>
-
-          <button
-            onClick={() => setCurrentScreen("ADD")}
-            style={{
-              width: "100%",
-              padding: "16px",
-              background: "#5C5CFF",
-              color: "#FFF",
-              border: "none",
-              borderRadius: "12px",
-              fontWeight: "bold",
-            }}
-          >
-            오늘의 습관 기록하기
-          </button>
-        </div>
-      )}
-
-      {/* 기록 추가 화면 */}
-      {currentScreen === "ADD" && (
-        <div style={{ paddingTop: "40px" }}>
-          <div
-            style={{
-              background: "#FFF",
-              padding: "25px",
-              borderRadius: "24px",
-            }}
-          >
-            <h3>오늘의 기록</h3>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "12px",
-                marginTop: "20px",
-              }}
-            >
-              <button
-                onClick={() => handleRecord(true)}
-                style={{
-                  padding: "16px",
-                  background: "#5C5CFF",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "12px",
-                }}
-              >
-                성공 완료! 🎉
-              </button>
-              <button
-                onClick={() => handleRecord(false)}
-                style={{
-                  padding: "16px",
-                  background: "#F5F5F5",
-                  color: "#333",
-                  border: "none",
-                  borderRadius: "12px",
-                }}
-              >
-                아쉽게 실패.. 😢
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 🚨 회복 UX 화면 */}
-      {currentScreen === "RECOVERY" && (
-        <div style={{ paddingTop: "20px" }}>
-          <div
-            style={{
-              background: "#FFF",
-              padding: "25px",
-              borderRadius: "24px",
-              border: "2px solid #5C5CFF",
-              textAlign: "center",
-            }}
-          >
-            <div style={{ fontSize: "40px" }}>{currentMission.icon}</div>
-            <h2
-              style={{ fontSize: "18px", fontWeight: "bold", margin: "10px 0" }}
-            >
-              농장 심폐소생 중..
+          {/* 🛠️ 대시보드 내 잔디 그리드 영역 (기존의 renderGrid 기능 대체) */}
+          <div style={{ background: "#FFF", padding: "20px", borderRadius: "24px", marginBottom: "20px" }}>
+            <h2 style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "12px", textAlign: "center" }}>
+              {isWithered ? "잔디가 시들고 있어요" : `연속 수확 ${streak}회차`}
             </h2>
-
-            <p
-              style={{
-                fontSize: "13px",
-                color: "#666",
-                background: "#F8F9FA",
-                padding: "12px",
-                borderRadius: "10px",
-              }}
-            >
-              {randomMessage}
-            </p>
-
             <div
               style={{
-                margin: "20px 0",
-                padding: "15px",
-                border: "1px dashed #5C5CFF",
-                borderRadius: "12px",
-                background: "#F5F5FF",
+                display: "grid",
+                gridTemplateColumns: "repeat(7, 1fr)",
+                gap: "8px",
               }}
             >
-              <span
-                style={{
-                  fontSize: "11px",
-                  color: "#5C5CFF",
-                  fontWeight: "bold",
-                }}
-              >
-                오늘의 회복 미션
-              </span>
-              <div
-                style={{
-                  fontWeight: "bold",
-                  fontSize: "15px",
-                  marginTop: "5px",
-                }}
-              >
-                {currentMission.text}
-              </div>
-            </div>
-
-            <button
-              onClick={() => {
-                setFailCount(0);
-                setIsWithered(false);
-                setCurrentScreen("HOME");
-              }}
-              style={{
-                width: "100%",
-                padding: "16px",
-                background: "#5C5CFF",
-                color: "#FFF",
-                border: "none",
-                borderRadius: "12px",
-                fontWeight: "bold",
-              }}
-            >
-              미션 완료하고 농장 살리기 💧
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-function renderGrid(isWithered = false) {
-  const grid = document.getElementById("grid");
-  // 홈 화면이 아닐 때는 잔디 그리기를 건너뛰도록 방어 코드 추가
-  if (!grid) return; 
-  
-  grid.innerHTML = "";
-  for (let i = 0; i < 7; i++) {
-    const cell = document.createElement("div");
-    const isActive = i < state.streak % 8;
-    cell.style.cssText = `aspect-ratio: 1; border-radius: 8px; background: ${isActive ? (isWithered ? "var(--withered)" : "var(--grass)") : "#ffffff"};`;
-    grid.appendChild(cell);
-  }
-  
-  // 엘리먼트가 존재할 때만 텍스트를 변경하도록 수정
-  const streakTxt = document.getElementById("streak-txt");
-  if (streakTxt) {
-    streakTxt.innerText = isWithered
-      ? "잔디가 시들고 있어요"
-      : `연속 수확 ${state.streak}회차`;
-  }
-}
+              {grassHistory.map((status, i) => (
+                <div
+                  key={i}
+                  style={{
+                    aspectRatio: "1",
+                    borderRadius: "8px",
+                    //
