@@ -6,22 +6,21 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>작심농장</title>
+    <title>작심삼일 감지기</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
     />
     <style>
       :root {
-        --primary: #7665ff;
-        --primary-soft: #f4f3ff;
+        --primary: #7c6dff; /* 시안의 메인 보라색 */
+        --primary-soft: #f0eeff;
         --bg: #ffffff;
         --text: #1c1c1e;
         --gray: #8e8e93;
         --light-gray: #f2f2f7;
-        --input-bg: #f0f0f5;
         --grass: #4cd964;
-        --empty-grass: #e5e5ea;
+        --withered: #d2b48c;
       }
 
       * {
@@ -31,1022 +30,747 @@
         font-family: "Pretendard", sans-serif;
         -webkit-tap-highlight-color: transparent;
       }
-
       body,
       html {
         width: 100%;
         height: 100%;
-        background: #eaeaea;
+        background: #111;
         display: flex;
         justify-content: center;
         align-items: center;
       }
 
-      /* 📱 반응형 프레임 컨테이너 */
-      .app-container {
+      /* 기기 프레임 (시안의 아이폰 폼팩터) */
+      .iphone {
         width: 375px;
         height: 812px;
         background: var(--bg);
         position: relative;
         overflow: hidden;
         border-radius: 44px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        display: flex;
-        flex-direction: column;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
       }
-
-      .status-bar-spacer {
-        height: 44px;
-        width: 100%;
-        flex-shrink: 0;
-      }
-
-      /* 스크린 구조 */
       .screen {
         display: none;
         width: 100%;
-        height: calc(100% - 44px);
-        padding: 24px 32px;
+        height: 100%;
+        padding: 60px 24px 100px;
         flex-direction: column;
-        overflow-y: auto;
         position: absolute;
-        top: 44px;
+        top: 0;
         left: 0;
+        background: var(--bg);
       }
-
-      .screen.in-app {
-        height: calc(100% - 128px);
-        padding: 16px 24px;
-      }
-
       .screen.active {
         display: flex;
+        z-index: 10;
       }
 
-      /* 헤더 스타일 */
+      /* 로고 스타일 (업로드하신 일러스트 로고 적용) */
+      .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 30px;
+      }
+      .main-logo {
+        height: 38px;
+        width: auto;
+        object-fit: contain;
+      }
+      .logo-text {
+        font-weight: 900;
+        font-size: 20px;
+        color: var(--text);
+        letter-spacing: -0.5px;
+      }
+
+      /* 헤더 내비게이션 */
       .header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 20px;
-        min-height: 24px;
-      }
-      .header-title {
-        font-size: 15px;
-        font-weight: 900;
-        color: var(--text);
-        cursor: pointer;
+        margin-bottom: 24px;
+        min-height: 40px;
       }
       .header-action {
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 700;
         color: var(--primary);
         cursor: pointer;
-        background: none;
-        border: none;
       }
-      .nav-link {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--primary);
-        text-decoration: none;
-        cursor: pointer;
-        align-self: flex-start;
-        margin-bottom: 32px;
-        background: none;
-        border: none;
-      }
-
-      /* 브랜드 및 타이틀 요소 */
-      .brand-area {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-bottom: 24px;
-      }
-      .brand-icon {
-        width: 24px;
-        height: 24px;
-        border: 2px dashed var(--primary);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 11px;
-        color: var(--primary);
-        font-weight: 800;
-      }
-      .brand-name {
-        font-size: 16px;
+      .header-title {
+        font-size: 17px;
         font-weight: 800;
         color: var(--text);
       }
 
-      .title-group {
-        margin-bottom: 36px;
-      }
-      .main-title {
-        font-size: 26px;
-        font-weight: 800;
-        color: var(--text);
-        line-height: 1.3;
-      }
-      .sub-title {
-        font-size: 14px;
-        color: var(--gray);
-        font-weight: 500;
-        margin-top: 8px;
-      }
-
-      /* 폼 요소 */
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+      /* 시안의 라운드 입력폼 */
+      .input-group {
         margin-bottom: 20px;
-        text-align: left;
       }
-      .form-group label {
+      .input-group label {
+        display: block;
         font-size: 13px;
         font-weight: 700;
         color: var(--text);
-        padding-left: 2px;
+        margin-bottom: 10px;
+        padding-left: 4px;
       }
-      .form-group input {
+      .input-group input {
         width: 100%;
-        padding: 18px 20px;
-        border-radius: 18px;
-        border: none;
-        background: var(--input-bg);
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--text);
+        padding: 18px 24px;
+        border-radius: 20px;
+        border: 1.5px solid var(--light-gray);
+        background: var(--light-gray);
         outline: none;
+        font-size: 16px;
+        transition: 0.2s;
+      }
+      .input-group input:focus {
+        border-color: var(--primary);
+        background: #fff;
       }
 
-      .form-popup-box {
-        background: #ffffff;
-        border: 1.5px solid var(--light-gray);
-        padding: 32px 24px;
+      /* 메인 대시보드 카드 */
+      .dashboard-card {
+        background: var(--primary-soft);
+        padding: 32px;
         border-radius: 32px;
         text-align: center;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
-        margin: auto 0;
+        margin-bottom: 28px;
       }
-      .form-popup-box .form-group input {
-        border: 1.5px solid var(--light-gray);
-        background: #ffffff;
-      }
-
-      .btn-submit {
-        width: 100%;
-        padding: 18px;
-        background: var(--primary);
-        color: #ffffff;
-        border: none;
-        border-radius: 18px;
-        font-weight: 800;
-        font-size: 15px;
-        cursor: pointer;
-      }
-      .btn-secondary {
-        width: 100%;
-        background: none;
-        border: none;
-        color: var(--gray);
-        font-weight: 700;
-        font-size: 13px;
-        cursor: pointer;
-        margin-top: 12px;
-      }
-
-      .switch-mode-text {
-        font-size: 13px;
-        color: var(--gray);
-        font-weight: 500;
-        margin-top: 20px;
-        text-align: center;
-      }
-      .switch-mode-link {
-        color: var(--gray);
-        text-decoration: underline;
-        font-weight: 600;
-        cursor: pointer;
-        margin-left: 4px;
-      }
-
-      /* 대시보드 */
-      .dashboard-panel {
-        background: var(--primary-soft);
-        padding: 24px 20px;
-        border-radius: 28px;
-        text-align: center;
-        margin-bottom: 24px;
-      }
-      .badge-land {
+      .status-badge {
         display: inline-block;
         padding: 6px 14px;
-        background: #ffffff;
+        background: #fff;
         border-radius: 20px;
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 800;
         color: var(--primary);
-        margin-bottom: 10px;
-      }
-      .streak-headline {
-        font-size: 20px;
-        font-weight: 900;
-        color: var(--text);
         margin-bottom: 16px;
       }
-      .grass-container {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 6px;
-      }
-      .grass-square {
-        aspect-ratio: 1;
-        border-radius: 6px;
-        background: var(--empty-grass);
-      }
-      .grass-square.active {
-        background: var(--grass);
-      }
 
-      .section-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 14px;
-      }
-      .section-title {
-        font-size: 16px;
-        font-weight: 800;
-        color: var(--text);
-      }
-
-      /* ⚡ 즉시 기록용 습관 카드 스타일 (터치 반응 피드백 추가) */
-      .cards-grid {
+      /* 시안의 습관 리스트 카드 UI */
+      .habit-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        padding-bottom: 20px;
+        gap: 14px;
       }
-      .habit-action-card {
+      .habit-card {
         background: var(--light-gray);
-        padding: 28px 16px;
-        border-radius: 24px;
+        padding: 35px 20px;
+        border-radius: 28px;
         text-align: center;
         cursor: pointer;
-        user-select: none;
-        transition:
-          transform 0.1s,
-          background-color 0.2s;
+        transition: 0.2s;
+        border: 2px solid transparent;
       }
-      .habit-action-card:active {
-        transform: scale(0.95);
-        background-color: #e2e2e9;
+      .habit-card:active {
+        transform: scale(0.96);
+        background: var(--primary-soft);
+        border-color: var(--primary);
       }
-      .icon-circle-bg {
-        width: 40px;
-        height: 40px;
-        background: #ffffff;
-        border-radius: 12px;
-        margin: 0 auto 12px;
+      .habit-icon-box {
+        width: 44px;
+        height: 44px;
+        background: #fff;
+        border-radius: 14px;
+        margin: 0 auto 16px;
         display: flex;
         align-items: center;
         justify-content: center;
       }
-      .icon-inner-dot {
-        width: 8px;
-        height: 8px;
+      .habit-dot {
+        width: 10px;
+        height: 10px;
         background: var(--primary);
         border-radius: 50%;
       }
-      .card-title-text {
+      .habit-name {
         font-weight: 800;
-        font-size: 14px;
+        font-size: 15px;
         color: var(--text);
       }
 
-      /* 마이페이지 통계 */
-      .stats-row {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 24px;
-      }
-      .stat-metric-card {
-        flex: 1;
-        padding: 20px;
-        border-radius: 24px;
-        text-align: center;
-      }
-      .stat-metric-card.purple {
-        background: var(--primary-soft);
-      }
-      .stat-metric-card.gray {
-        background: var(--light-gray);
-      }
-      .stat-count-val {
-        font-size: 26px;
-        font-weight: 900;
-      }
-      .stat-count-val.purple {
-        color: var(--primary);
-      }
-      .stat-label-desc {
-        font-size: 11px;
-        color: var(--gray);
-        font-weight: 700;
-        margin-top: 4px;
-      }
-
-      .list-feed {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        padding-bottom: 20px;
-      }
-      .feed-card-row {
-        background: var(--light-gray);
-        padding: 16px 20px;
-        border-radius: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .feed-main-lbl {
+      /* 버튼 시스템 */
+      .btn-primary {
+        width: 100%;
+        padding: 22px;
+        border-radius: 22px;
+        border: none;
+        background: var(--primary);
+        color: white;
         font-weight: 800;
-        font-size: 14px;
-        color: var(--text);
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.2s;
       }
-      .feed-sub-lbl {
-        font-size: 12px;
+      .btn-primary:active {
+        opacity: 0.8;
+        transform: scale(0.98);
+      }
+      .btn-text {
+        background: none;
+        border: none;
         color: var(--gray);
+        padding: 16px;
+        cursor: pointer;
+        font-size: 14px;
+        width: 100%;
         font-weight: 600;
       }
 
-      /* 설정 */
-      .toggle-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 16px 0;
-        border-bottom: 1px solid var(--light-gray);
-      }
-      .toggle-info-text h4 {
-        font-size: 14px;
-        font-weight: 800;
-        color: var(--text);
-      }
-      .toggle-info-text p {
-        font-size: 11px;
-        color: var(--gray);
-        margin-top: 2px;
-      }
-
-      .switch-widget {
-        width: 51px;
-        height: 31px;
-        background: #e5e5ea;
-        border-radius: 16px;
-        position: relative;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-      .switch-widget.on {
-        background: var(--primary);
-      }
-      .switch-handle-circle {
-        width: 27px;
-        height: 27px;
-        background: #ffffff;
-        border-radius: 50%;
-        position: absolute;
-        top: 2px;
-        left: 2px;
-        transition: left 0.2s;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-      }
-      .switch-widget.on .switch-handle-circle {
-        left: 22px;
-      }
-
-      /* 탭바 */
-      .bottom-tab-bar {
-        display: none;
+      /* 하단 내비게이션 바 (시안 참조) */
+      .bottom-nav {
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 84px;
-        border-top: 1px solid var(--light-gray);
-        background: #ffffff;
+        height: 92px;
+        border-top: 1.5px solid var(--light-gray);
+        display: none;
         justify-content: space-around;
-        padding-top: 12px;
+        padding-top: 14px;
+        background: white;
         z-index: 100;
       }
-      .tab-item-btn {
+      .nav-item {
         text-align: center;
+        color: var(--gray);
+        font-size: 12px;
+        font-weight: 700;
         cursor: pointer;
         flex: 1;
-        color: var(--gray);
       }
-      .tab-item-btn.active {
+      .nav-item.active {
         color: var(--primary);
       }
-      .tab-dot-indicator {
+      .nav-dot {
         width: 6px;
         height: 6px;
         background: currentColor;
         border-radius: 50%;
         margin: 0 auto 6px;
-        opacity: 0;
-      }
-      .tab-item-btn.active .tab-dot-indicator {
-        opacity: 1;
-      }
-      .tab-item-btn span {
-        font-size: 11px;
-        font-weight: 700;
-        display: block;
       }
 
-      /* 안내 모달 */
-      .overlay-backdrop {
+      /* 토글 스위치 */
+      .toggle {
+        width: 52px;
+        height: 31px;
+        background: #e5e5ea;
+        border-radius: 16px;
+        position: relative;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .toggle.on {
+        background: var(--primary);
+      }
+      .toggle-handle {
+        width: 27px;
+        height: 27px;
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        transition: 0.3s;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+      }
+      .toggle.on .toggle-handle {
+        left: 23px;
+      }
+
+      /* 팝업 모달 */
+      .overlay {
         display: none;
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.4);
+        background: rgba(0, 0, 0, 0.6);
         z-index: 1000;
         justify-content: center;
         align-items: center;
         padding: 24px;
       }
-      .modal-box-card {
-        background: #ffffff;
-        padding: 32px 24px;
+      .modal {
+        background: white;
+        padding: 36px 24px;
         border-radius: 32px;
         width: 100%;
         text-align: center;
+        animation: slideUp 0.3s ease-out;
       }
 
-      /* 토스트 알림 */
-      .toast-overlay-message {
+      @keyframes slideUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      #toast {
         position: absolute;
-        bottom: 110px;
+        bottom: 120px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(28, 28, 30, 0.93);
-        color: #ffffff;
-        padding: 14px 24px;
-        border-radius: 24px;
-        font-size: 13px;
-        font-weight: 700;
-        z-index: 2000;
-        white-space: nowrap;
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 16px 28px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 600;
         display: none;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-      }
-
-      @media (max-width: 480px) {
-        body {
-          background: var(--bg);
-        }
-        .app-container {
-          width: 100%;
-          height: 100%;
-          border-radius: 0;
-          box-shadow: none;
-        }
-        .status-bar-spacer {
-          height: 32px;
-        }
+        z-index: 2000;
       }
     </style>
   </head>
   <body>
-    <div class="app-container">
-      <div class="status-bar-spacer"></div>
-
-      <section id="scr-login" class="screen active">
-        <div class="brand-area" style="margin-top: 36px">
-          <div class="brand-icon">🌱</div>
-          <span class="brand-name">작심농장</span>
-        </div>
-        <div class="title-group">
-          <h1 class="main-title">환영합니다</h1>
-          <p class="sub-title">오늘의 수확을 위해 로그인해주세요.</p>
-        </div>
-        <form onsubmit="handleAuthSubmit(event, 'login')">
-          <div class="form-group">
-            <label>이메일</label>
-            <input
-              type="email"
-              required
-              id="fld-login-email"
-              value="farmer@zagsim.com"
-            />
-          </div>
-          <div class="form-group" style="margin-bottom: 32px">
-            <label>비밀번호</label>
-            <input
-              type="password"
-              required
-              id="fld-login-pass"
-              value="12345678"
-            />
-          </div>
-          <button type="submit" class="btn-submit">수확 시작하기</button>
-          <p class="switch-mode-text">
-            계정이 없으신가요?<span
-              class="switch-mode-link"
-              onclick="routeTo('scr-signup')"
-              >회원가입</span
-            >
-          </p>
-        </form>
-      </section>
-
-      <section id="scr-signup" class="screen">
-        <button class="nav-link" onclick="routeTo('scr-login')">
-          이전으로
-        </button>
-        <div class="title-group">
-          <h1 class="main-title">농장주 등록</h1>
-          <p class="sub-title">당신만의 특별한 농장을 만들어보세요.</p>
-        </div>
-        <form onsubmit="handleAuthSubmit(event, 'signup')">
-          <div class="form-group">
-            <label>이름</label>
-            <input
-              type="text"
-              placeholder="이름 입력"
-              required
-              id="fld-join-name"
-            />
-          </div>
-          <div class="form-group">
-            <label>이메일</label>
-            <input
-              type="email"
-              placeholder="이메일 입력"
-              required
-              id="fld-join-email"
-            />
-          </div>
-          <div class="form-group" style="margin-bottom: 36px">
-            <label>비밀번호</label>
-            <input
-              type="password"
-              placeholder="8자 이상 입력"
-              minlength="8"
-              required
-              id="fld-join-pass"
-            />
-          </div>
-          <button type="submit" class="btn-submit">등록 완료</button>
-        </form>
-      </section>
-
-      <section id="scr-home" class="screen in-app">
-        <header class="header">
-          <div class="header-title" onclick="openRulesPop()">작심농장</div>
-          <span class="header-action" onclick="routeTo('scr-settings')"
-            >알림설정</span
-          >
-        </header>
-
-        <div class="dashboard-panel">
-          <span class="badge-land" id="lbl-land-metric">관리 중인 토지 1</span>
-          <h2 class="streak-headline" id="lbl-streak-metric">
-            연속 수확 5회차
-          </h2>
-          <div class="grass-container" id="grass-board-grid"></div>
-        </div>
-
-        <div class="section-row">
-          <h3 class="section-title">나의 기록 카드</h3>
-          <span class="header-action" onclick="routeTo('scr-card-create')"
-            >카드 추가</span
-          >
-        </div>
-
-        <div class="cards-grid" id="habit-cards-injector"></div>
-      </section>
-
-      <section id="scr-card-create" class="screen in-app">
-        <div class="form-popup-box">
-          <h3
-            style="
-              font-size: 18px;
-              font-weight: 900;
-              margin-bottom: 24px;
-              color: var(--text);
-            "
-          >
-            새 기록 카드 만들기
-          </h3>
-          <div class="form-group">
-            <label>습관 이름</label>
-            <input type="text" id="fld-new-card-title" placeholder="예) 독서" />
-          </div>
-          <button class="btn-submit" onclick="executeCreateCardAction()">
-            카드 생성
-          </button>
-          <button class="btn-secondary" onclick="routeTo('scr-home')">
-            나중에 하기
-          </button>
-        </div>
-      </section>
-
-      <section id="scr-mypage" class="screen in-app">
-        <h2
+    <div class="iphone">
+      <section id="s-login" class="screen active">
+        <div
           style="
-            font-size: 20px;
-            font-weight: 900;
-            margin-bottom: 20px;
-            color: var(--text);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
           "
         >
-          내 정보
-        </h2>
+          <div class="logo-container">
+            <img src="zagsim_logo.png" alt="작심농장" class="main-logo" />
+            <span class="logo-text">작심농장</span>
+          </div>
+          <h1
+            style="
+              font-size: 30px;
+              font-weight: 900;
+              margin-bottom: 12px;
+              letter-spacing: -1px;
+            "
+          >
+            환영합니다
+          </h1>
+          <p style="color: var(--gray); margin-bottom: 40px; font-weight: 500">
+            오늘의 수확을 위해 로그인해주세요.
+          </p>
 
-        <div class="stats-row">
-          <div class="stat-metric-card purple">
-            <span class="stat-count-val purple" id="lbl-total-harvest-num"
-              >6</span
-            >
-            <p class="stat-label-desc">총 수확</p>
+          <div class="input-group">
+            <label>이메일</label>
+            <input type="email" placeholder="이메일 주소를 입력하세요" />
           </div>
-          <div class="stat-metric-card gray">
-            <span class="stat-count-val" id="lbl-total-land-num">1</span>
-            <p class="stat-label-desc">보유 토지</p>
+          <div class="input-group">
+            <label>비밀번호</label>
+            <input type="password" placeholder="비밀번호를 입력하세요" />
           </div>
+
+          <button class="btn-primary" onclick="go('s-home')">
+            수확 시작하기
+          </button>
+          <button class="btn-text" onclick="go('s-join')">
+            계정이 없으신가요? 회원가입
+          </button>
+        </div>
+      </section>
+
+      <section id="s-join" class="screen">
+        <div
+          style="
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+          "
+        >
+          <div class="header" style="margin-bottom: 40px">
+            <span class="header-action" onclick="go('s-login')">이전으로</span>
+          </div>
+          <h1 style="font-size: 30px; font-weight: 900; margin-bottom: 12px">
+            농장주 등록
+          </h1>
+          <p style="color: var(--gray); margin-bottom: 40px">
+            당신만의 특별한 농장을 만들어보세요.
+          </p>
+          <div class="input-group">
+            <label>이름</label><input type="text" placeholder="이름 입력" />
+          </div>
+          <div class="input-group">
+            <label>이메일</label
+            ><input type="email" placeholder="이메일 입력" />
+          </div>
+          <div class="input-group">
+            <label>비밀번호</label
+            ><input type="password" placeholder="8자 이상 입력" />
+          </div>
+          <button class="btn-primary" onclick="go('s-login')">등록 완료</button>
+        </div>
+      </section>
+
+      <section id="s-home" class="screen">
+        <header class="header">
+          <div
+            class="logo-area"
+            onclick="openRules()"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              cursor: pointer;
+            "
+          >
+            <img src="logo.png" alt="logo" style="height: 28px" />
+            <span style="font-weight: 900; font-size: 16px">작심농장</span>
+          </div>
+          <span class="header-action" onclick="go('s-noti')">알림설정</span>
+        </header>
+
+        <div class="dashboard-card">
+          <span class="status-badge">관리 중인 토지 1</span>
+          <h2
+            id="streak-txt"
+            style="font-size: 22px; font-weight: 900; margin-bottom: 20px"
+          >
+            연속 수확 0회차
+          </h2>
+          <div
+            id="grid"
+            style="
+              display: grid;
+              grid-template-columns: repeat(7, 1fr);
+              gap: 8px;
+            "
+          ></div>
         </div>
 
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 0 4px;
+          "
+        >
+          <h3 style="font-size: 17px; font-weight: 800">나의 기록 카드</h3>
+          <span class="header-action" onclick="openAddModal()">카드 추가</span>
+        </div>
+
+        <div class="habit-grid" id="habit-container">
+          <div class="habit-card" onclick="harvest('물 마시기')">
+            <div class="habit-icon-box"><div class="habit-dot"></div></div>
+            <p class="habit-name">물 마시기</p>
+          </div>
+          <div class="habit-card" onclick="harvest('영양제')">
+            <div class="habit-icon-box"><div class="habit-dot"></div></div>
+            <p class="habit-name">영양제</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="s-noti" class="screen">
+        <header class="header">
+          <span class="header-action" onclick="go('s-home')">홈으로</span>
+          <span class="header-title">알림 설정</span>
+          <div style="width: 40px"></div>
+        </header>
+        <div style="margin-top: 10px">
+          <div class="noti-card">
+            <div>
+              <h4 style="font-weight: 800">수확 리마인더</h4>
+              <p style="font-size: 12px; color: var(--gray); margin-top: 4px">
+                매일 잊지 않도록 푸시를 보냅니다
+              </p>
+            </div>
+            <div class="toggle on" id="t-remind" onclick="toggleNoti('remind')">
+              <div class="toggle-handle"></div>
+            </div>
+          </div>
+          <div class="noti-card" style="margin-top: 12px">
+            <div>
+              <h4 style="font-weight: 800">패널티 경고</h4>
+              <p style="font-size: 12px; color: var(--gray); margin-top: 4px">
+                3일간 미수확 시 경고 알림을 보냅니다
+              </p>
+            </div>
+            <div
+              class="toggle on"
+              id="t-penalty"
+              onclick="toggleNoti('penalty')"
+            >
+              <div class="toggle-handle"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="s-mypage" class="screen">
+        <header class="header">
+          <span class="header-title" style="font-size: 22px; font-weight: 900"
+            >내 정보</span
+          >
+        </header>
+        <div style="display: flex; gap: 12px; margin-bottom: 30px">
+          <div
+            style="
+              flex: 1;
+              background: var(--primary-soft);
+              padding: 24px;
+              border-radius: 28px;
+              text-align: center;
+            "
+          >
+            <span
+              style="font-size: 28px; font-weight: 900; color: var(--primary)"
+              id="val-total"
+              >0</span
+            >
+            <p
+              style="
+                font-size: 12px;
+                color: var(--gray);
+                margin-top: 6px;
+                font-weight: 700;
+              "
+            >
+              총 수확
+            </p>
+          </div>
+          <div
+            style="
+              flex: 1;
+              background: var(--light-gray);
+              padding: 24px;
+              border-radius: 28px;
+              text-align: center;
+            "
+          >
+            <span style="font-size: 28px; font-weight: 900" id="val-land"
+              >1</span
+            >
+            <p
+              style="
+                font-size: 12px;
+                color: var(--gray);
+                margin-top: 6px;
+                font-weight: 700;
+              "
+            >
+              보유 토지
+            </p>
+          </div>
+        </div>
         <h3
           style="
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 800;
-            color: var(--text);
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            padding-left: 4px;
           "
         >
           수확 타임라인
         </h3>
-        <div class="list-feed" id="timeline-feed-wrapper"></div>
+        <div
+          id="history-list"
+          style="flex: 1; overflow-y: auto; padding-bottom: 20px"
+        ></div>
       </section>
 
-      <section id="scr-settings" class="screen in-app">
-        <header class="header">
-          <span class="header-action" onclick="routeTo('scr-home')"
-            >홈으로</span
-          >
-          <span style="font-size: 16px; font-weight: 800; color: var(--text)"
-            >알림 설정</span
-          >
-          <div style="width: 40px"></div>
-        </header>
-
-        <div style="display: flex; flex-direction: column">
-          <div class="toggle-row">
-            <div class="toggle-info-text">
-              <h4>수확 리마인더</h4>
-              <p>매일 정해진 시간에 알림을 보내드려요.</p>
-            </div>
-            <div
-              class="switch-widget on"
-              id="sw-remind"
-              onclick="toggleConfigSwitch('notiRecord', 'sw-remind')"
-            >
-              <div class="switch-handle-circle"></div>
-            </div>
+      <div id="add-modal" class="overlay" onclick="closeAddModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h2 style="font-size: 20px; font-weight: 900; margin-bottom: 24px">
+            새 기록 카드 만들기
+          </h2>
+          <div class="input-group" style="text-align: left">
+            <label>습관 이름</label>
+            <input type="text" id="habit-input" placeholder="예: 독서하기" />
           </div>
-
-          <div class="toggle-row">
-            <div class="toggle-info-text">
-              <h4>패널티 경고</h4>
-              <p>3일간 미수확 시 경고 알림을 보냅니다.</p>
-            </div>
-            <div
-              class="switch-widget on"
-              id="sw-penalty"
-              onclick="toggleConfigSwitch('notiCheer', 'sw-penalty')"
-            >
-              <div class="switch-handle-circle"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div
-        id="pop-rules-overlay"
-        class="overlay-backdrop"
-        onclick="closeRulesPop()"
-      >
-        <div class="modal-box-card" onclick="event.stopPropagation()">
-          <h3
-            style="
-              font-size: 18px;
-              font-weight: 900;
-              margin-bottom: 16px;
-              color: var(--text);
-            "
-          >
-            작심농장 수칙
-          </h3>
-          <div
-            style="
-              text-align: left;
-              font-size: 13px;
-              color: #555;
-              line-height: 1.8;
-              background: var(--light-gray);
-              padding: 20px;
-              border-radius: 20px;
-              margin-bottom: 24px;
-            "
-          >
-            • 매일 기록하면 잔디가 한 칸씩 자라납니다.<br />
-            • 3일간 수확 기록이 없으면 잔디가 시들게 됩니다.<br />
-            • 30회 수확마다 새로운 토지를 보상받습니다.<br />
-            • 함께 꾸준히 오늘의 습관을 만들어가요!
-          </div>
-          <button
-            class="btn-submit"
-            style="margin-bottom: 0"
-            onclick="closeRulesPop()"
-          >
-            알겠습니다
+          <button class="btn-primary" onclick="createNewHabit()">
+            카드 생성
+          </button>
+          <button class="btn-text" onclick="closeAddModal()">
+            다음에 하기
           </button>
         </div>
       </div>
 
-      <nav class="bottom-tab-bar" id="app-global-tabbar">
-        <div
-          class="tab-item-btn active"
-          id="tab-home"
-          onclick="routeTo('scr-home')"
-        >
-          <div class="tab-dot-indicator"></div>
-          <span>홈</span>
+      <div id="rules-modal" class="overlay" onclick="closeRules()">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h2 style="margin-bottom: 20px; font-weight: 900">작심농장 수칙</h2>
+          <div
+            style="
+              text-align: left;
+              font-size: 14px;
+              line-height: 1.8;
+              color: #555;
+              margin-bottom: 30px;
+              background: var(--light-gray);
+              padding: 20px;
+              border-radius: 20px;
+            "
+          >
+            - 매일 기록하면 잔디가 한 칸씩 자라납니다.<br />
+            - 3일간 수확 기록이 없으면 잔디가 시들게 됩니다.<br />
+            - 30회 수확마다 새로운 토지를 보상받습니다.
+          </div>
+          <button class="btn-primary" onclick="closeRules()">알겠습니다</button>
         </div>
-        <div
-          class="tab-item-btn"
-          id="tab-mypage"
-          onclick="routeTo('scr-mypage')"
-        >
-          <div class="tab-dot-indicator"></div>
-          <span>내 정보</span>
+      </div>
+
+      <nav class="bottom-nav" id="main-nav">
+        <div class="nav-item active" onclick="go('s-home')">
+          <div class="nav-dot"></div>
+          홈
+        </div>
+        <div class="nav-item" onclick="go('s-mypage')">
+          <div class="nav-dot" style="opacity: 0"></div>
+          내 정보
         </div>
       </nav>
 
-      <div id="toast-message-layer" class="toast-overlay-message"></div>
+      <div id="toast">메시지</div>
     </div>
 
     <script>
-      // --- [1. 상태 데이터 모델] ---
-      let storageData = JSON.parse(
-        localStorage.getItem("zagsim_integrated_store_v5"),
-      ) || {
-        isAuth: false,
-        totalHarvest: 6,
-        landCount: 1,
-        streak: 5,
-        history: [
-          { id: 1, name: "독서", time: "5월 19일 09:30" },
-          { id: 2, name: "명상하기", time: "5월 18일 07:15" },
-          { id: 3, name: "독서", time: "5월 18일 14:22" },
-          { id: 4, name: "물마시기", time: "5월 17일 11:05" },
-          { id: 5, name: "영양제", time: "5월 16일 20:45" },
-          { id: 6, name: "독서", time: "5월 15일 16:12" },
-        ],
-        habits: [
-          { id: "hb1", name: "물마시기" },
-          { id: "hb2", name: "영양제" },
-          { id: "hb3", name: "독서" },
-          { id: "hb4", name: "명상하기" },
-        ],
-        notiRecord: true,
-        notiCheer: true,
+      let state = {
+        total: 0,
+        lands: 1,
+        streak: 0,
+        history: [],
+        lastHarvest: new Date(),
+        notiRemind: true,
+        notiPenalty: true,
       };
 
-      let toastTimer = null;
-
-      function saveState() {
-        localStorage.setItem(
-          "zagsim_integrated_store_v5",
-          JSON.stringify(storageData),
-        );
-      }
-
-      // --- [2. 라우팅 컨트롤러] ---
-      function routeTo(screenId) {
+      function go(id) {
         document
           .querySelectorAll(".screen")
-          .forEach((scr) => scr.classList.remove("active"));
-        document.getElementById(screenId).classList.add("active");
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
 
-        const isAuthGroup =
-          screenId === "scr-login" || screenId === "scr-signup";
-        const tabBar = document.getElementById("app-global-tabbar");
+        const isAuth = id === "s-login" || id === "s-join";
+        document.getElementById("main-nav").style.display = isAuth
+          ? "none"
+          : "flex";
 
-        if (isAuthGroup) {
-          tabBar.style.display = "none";
-        } else {
-          tabBar.style.display = "flex";
-
-          const isHomeTab =
-            screenId === "scr-home" || screenId === "scr-card-create";
-          if (isHomeTab) {
-            document.getElementById("tab-home").classList.add("active");
-            document.getElementById("tab-mypage").classList.remove("active");
-          } else if (screenId === "scr-mypage") {
-            document.getElementById("tab-home").classList.remove("active");
-            document.getElementById("tab-mypage").classList.add("active");
-            renderMyPageTimeline();
-          } else {
-            document.getElementById("tab-home").classList.remove("active");
-            document.getElementById("tab-mypage").classList.remove("active");
-          }
+        // 내비게이션 활성화 표시
+        const navItems = document.querySelectorAll(".nav-item");
+        if (id === "s-home") {
+          navItems[0].classList.add("active");
+          navItems[1].classList.remove("active");
+          navItems[0].querySelector(".nav-dot").style.opacity = 1;
+          navItems[1].querySelector(".nav-dot").style.opacity = 0;
+        } else if (id === "s-mypage") {
+          navItems[1].classList.add("active");
+          navItems[0].classList.remove("active");
+          navItems[1].querySelector(".nav-dot").style.opacity = 1;
+          navItems[0].querySelector(".nav-dot").style.opacity = 0;
+          renderMypage();
         }
-
-        if (screenId === "scr-home") {
-          renderHomeDashboard();
-        }
+        checkSystem();
       }
 
-      // --- [3. 토스트 팝업 모듈] ---
-      function openToast(message) {
-        const layer = document.getElementById("toast-message-layer");
-        layer.innerText = message;
-        layer.style.display = "block";
-        if (toastTimer) clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => {
-          layer.style.display = "none";
-        }, 2200);
-      }
+      function createNewHabit() {
+        const input = document.getElementById("habit-input");
+        const name = input.value.trim();
+        if (!name) return;
 
-      // --- [4. 인증 이벤트 핸들러] ---
-      function handleAuthSubmit(event, mode) {
-        event.preventDefault();
-        if (mode === "signup") {
-          openToast("🎉 농장주 등록 성공! 로그인을 진행해주세요.");
-          routeTo("scr-login");
-        } else if (mode === "login") {
-          storageData.isAuth = true;
-          saveState();
-          routeTo("scr-home");
-          openToast("🌱 오늘의 수확을 위해 입장했습니다!");
-        }
-      }
+        const container = document.getElementById("habit-container");
+        const card = document.createElement("div");
+        card.className = "habit-card";
+        card.onclick = () => harvest(name);
+        card.innerHTML = `<div class="habit-icon-box"><div class="habit-dot"></div></div><p class="habit-name">${name}</p>`;
 
-      // --- [5. UI 렌더링 엔진] ---
-      function renderHomeDashboard() {
-        document.getElementById("lbl-land-metric").innerText =
-          `관리 중인 토지 ${storageData.landCount}`;
-        document.getElementById("lbl-streak-metric").innerText =
-          `연속 수확 ${storageData.streak}회차`;
-
-        // 7칸 잔디밭 드로잉
-        const grid = document.getElementById("grass-board-grid");
-        grid.innerHTML = "";
-        const fillCount =
-          storageData.streak === 0 ? 0 : ((storageData.streak - 1) % 7) + 1;
-
-        for (let i = 0; i < 7; i++) {
-          const sq = document.createElement("div");
-          sq.className = `grass-square ${i < fillCount ? "active" : ""}`;
-          grid.appendChild(sq);
-        }
-
-        // 카드 목록 렌더링 (원터치 다이렉트 기록 추가 적용)
-        const injector = document.getElementById("habit-cards-injector");
-        injector.innerHTML = "";
-        storageData.habits.forEach((habit) => {
-          const card = document.createElement("div");
-          card.className = "habit-action-card";
-          card.onclick = () => executeDirectHarvest(habit.name); // ⚡ 원터치 이벤트 즉시 연결
-          card.innerHTML = `
-          <div class="icon-circle-bg"><div class="icon-inner-dot"></div></div>
-          <p class="card-title-text">${habit.name}</p>
-        `;
-          injector.appendChild(card);
-        });
-      }
-
-      function renderMyPageTimeline() {
-        document.getElementById("lbl-total-harvest-num").innerText =
-          storageData.totalHarvest;
-        document.getElementById("lbl-total-land-num").innerText =
-          storageData.landCount;
-
-        const wrapper = document.getElementById("timeline-feed-wrapper");
-        wrapper.innerHTML = "";
-
-        if (storageData.history.length === 0) {
-          wrapper.innerHTML =
-            '<p style="text-align:center; color:var(--gray); padding:32px 0; font-size:13px;">내역이 없습니다.</p>';
-          return;
-        }
-
-        storageData.history.forEach((item) => {
-          const row = document.createElement("div");
-          row.className = "feed-card-row";
-          row.innerHTML = `
-          <span class="feed-main-lbl">${item.name}</span>
-          <span class="feed-sub-lbl">${item.time}</span>
-        `;
-          wrapper.appendChild(row);
-        });
-      }
-
-      // --- [6. 핵심 원터치 비즈니스 로직 알고리즘] ---
-      function executeDirectHarvest(habitName) {
-        const now = new Date();
-        const currentDayKey = `${now.getMonth() + 1}월 ${now.getDate()}일`;
-
-        // 당일 중복 수확 체크 유효성 검사
-        const isDup = storageData.history.some(
-          (log) => log.name === habitName && log.time.includes(currentDayKey),
-        );
-        if (isDup) {
-          openToast(`⚠ '${habitName}'은(는) 오늘 이미 수확했습니다.`);
-          return;
-        }
-
-        const formattedTime = `${now.getMonth() + 1}월 ${now.getDate()}일 ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-
-        storageData.totalHarvest++;
-        storageData.streak++;
-
-        // 30회 수확마다 신규 토지 보상 메커니즘
-        if (
-          storageData.totalHarvest > 0 &&
-          storageData.totalHarvest % 30 === 0
-        ) {
-          storageData.landCount++;
-        }
-
-        // 내역 최상단에 즉시 추가
-        storageData.history.unshift({
-          id: Date.now(),
-          name: habitName,
-          time: formattedTime,
-        });
-
-        saveState();
-        renderHomeDashboard(); // 화면 대시보드와 잔디 상태 즉시 새로고침
-        openToast(`${habitName} 수확 완료! 🌱`);
-      }
-
-      function executeCreateCardAction() {
-        const input = document.getElementById("fld-new-card-title");
-        const title = input.value.trim();
-        if (!title) {
-          openToast("⚠ 습관 이름을 입력하세요.");
-          return;
-        }
-        storageData.habits.push({ id: "hb_" + Date.now(), name: title });
+        container.appendChild(card);
         input.value = "";
-        saveState();
-        routeTo("scr-home");
-        openToast("새로운 기록 카드가 추가되었습니다.");
+        closeAddModal();
+        showToast("기록 카드가 추가되었습니다.");
       }
 
-      function toggleConfigSwitch(key, elemId) {
-        storageData[key] = !storageData[key];
-        document
-          .getElementById(elemId)
-          .classList.toggle("on", storageData[key]);
-        saveState();
+      function harvest(name) {
+        state.total++;
+        state.streak++;
+        state.lastHarvest = new Date();
+        if (state.total > 0 && state.total % 30 === 0) state.lands++;
+
+        const now = new Date();
+        state.history.unshift({
+          name,
+          time: `${now.getMonth() + 1}월 ${now.getDate()}일 ${now.getHours()}:${now.getMinutes()}`,
+        });
+        showToast(`${name} 수확 완료!`);
+        renderGrid();
       }
 
-      function openRulesPop() {
-        document.getElementById("pop-rules-overlay").style.display = "flex";
-      }
-      function closeRulesPop() {
-        document.getElementById("pop-rules-overlay").style.display = "none";
+      function checkSystem() {
+        const hours = (new Date() - state.lastHarvest) / (1000 * 60 * 60);
+        const isWithered = hours >= 72;
+        renderGrid(isWithered);
       }
 
-      // 설정 값 초기 세팅 동기화
-      document
-        .getElementById("sw-remind")
-        .classList.toggle("on", storageData.notiRecord);
-      document
-        .getElementById("sw-penalty")
-        .classList.toggle("on", storageData.notiCheer);
-
-      // 초기 화면 진입 라우팅 분기 제어
-      if (storageData.isAuth) {
-        routeTo("scr-home");
-      } else {
-        routeTo("scr-login");
+      function renderGrid(isWithered = false) {
+        const grid = document.getElementById("grid");
+        grid.innerHTML = "";
+        for (let i = 0; i < 7; i++) {
+          const cell = document.createElement("div");
+          const isActive = i < state.streak % 8;
+          cell.style.cssText = `aspect-ratio: 1; border-radius: 8px; background: ${isActive ? (isWithered ? "var(--withered)" : "var(--grass)") : "#ffffff"};`;
+          grid.appendChild(cell);
+        }
+        document.getElementById("streak-txt").innerText = isWithered
+          ? "잔디가 시들고 있어요"
+          : `연속 수확 ${state.streak}회차`;
       }
+
+      function renderMypage() {
+        document.getElementById("val-total").innerText = state.total;
+        document.getElementById("val-land").innerText = state.lands;
+        const list = document.getElementById("history-list");
+        list.innerHTML =
+          state.history
+            .map(
+              (h) => `
+            <div style="background:var(--light-gray); padding:20px; border-radius:20px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:800; font-size:15px;">${h.name}</span>
+                <span style="font-size:12px; color:var(--gray); font-weight:600;">${h.time}</span>
+            </div>
+        `,
+            )
+            .join("") ||
+          '<p style="text-align:center; color:var(--gray); margin-top:40px; font-weight:600;">아직 수확 기록이 없습니다.</p>';
+      }
+
+      function toggleNoti(type) {
+        const target = type === "remind" ? "notiRemind" : "notiPenalty";
+        state[target] = !state[target];
+        document.getElementById(`t-${type}`).classList.toggle("on");
+      }
+
+      function openAddModal() {
+        document.getElementById("add-modal").style.display = "flex";
+      }
+      function closeAddModal() {
+        document.getElementById("add-modal").style.display = "none";
+      }
+      function openRules() {
+        document.getElementById("rules-modal").style.display = "flex";
+      }
+      function closeRules() {
+        document.getElementById("rules-modal").style.display = "none";
+      }
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.innerText = msg;
+        t.style.display = "block";
+        setTimeout(() => (t.style.display = "none"), 2000);
+      }
+
+      renderGrid();
     </script>
   </body>
 </html>
