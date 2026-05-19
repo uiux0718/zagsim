@@ -1,117 +1,39 @@
-/* 잔디 기본 상태 */
-.cell {
-  aspect-ratio: 1;
-  background: #333;
-  border-radius: 4px;
-  transition: transform 0.2s ease;
+/* ==========================================
+   알림 설정 화면 원래 디자인 완벽 복원
+   ========================================== */
+
+/* 1. 알림 설정 카드 박스 (회색 배경 및 둥근 모서리) */
+.noti-card {
+  background-color: var(--light-gray); /* 시스템 연한 회색 (#f2f2f7) 적용 */
+  border-radius: 20px;                 /* 다른 카드들과 통일감 있는 라운드 값 */
+  padding: 20px 24px;                  /* 내부 여백을 주어 답답함 해소 */
+  margin-top: 12px;                    /* 카드 사이의 상단 간격 */
+  
+  /* 2. 정렬 시스템: 글자는 왼쪽, 토글 스위치는 오른쪽 끝 배치 */
+  display: flex;
+  justify-content: space-between;      /* 양 끝 정렬 핵심 속성 */
+  align-items: center;                 /* 상하 수직 정가운데 정렬 */
+  
+  transition: background-color 0.2s;
 }
 
-/* 데이터가 있는 잔디에 애니메이션 적용 */
-.cell.active-grass {
-  animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+/* 3. 텍스트 레이아웃 제어 (글자 정렬이 왼쪽으로 고정되도록) */
+.noti-card > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;                            /* 제목과 하단 설명 사이의 간격 */
+  text-align: left;                    /* 텍스트 왼쪽 정렬 강제 */
 }
 
-/* 마우스를 올리거나 터치했을 때 살짝 커지는 효과 (Interactive) */
-.cell:active {
-  transform: scale(1.2);
-  z-index: 10;
+/* 4. 타이틀 및 설명 글씨 상세 스타일 */
+.noti-card h4 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
 }
 
-@keyframes pop {
-  0% {
-    transform: scale(0);
-    filter: brightness(2); /* 처음 나타날 때 살짝 반짝임 */
-  }
-  100% {
-    transform: scale(1);
-    filter: brightness(1);
-  }
-}
-/* 첫 번째 코드의 :root 부분에 추가/수정 */
-:root {
-  /* ... 기존 변수들 ... */
-  --grass: #4cd964;
-  --withered-bg: #e2dcc8; /* 말라버린 흙 색상 */
-  --withered-grass: #8d775f; /* 시든 풀의 탁한 갈색 */
-}
-
-/* 시든 상태의 셀 스타일 */
-.cell.withered {
-  background: var(--withered-bg) !important;
-  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1); /* 움푹 들어간 느낌 */
-  position: relative;
-  overflow: hidden;
-}
-
-.cell.withered::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 60%;
-  height: 2px;
-  background: var(--withered-grass);
-  transform: translate(-50%, -50%) rotate(-15deg); /* 꺾인 풀 형상 */
-  border-radius: 2px;
-}
-/* :root 변수 업데이트 */
-:root {
-  --primary: #7c6dff;
-  --bg: #ffffff;
-  --text: #1c1c1e;
-  --gray: #8e8e93;
-  --light-gray: #f2f2f7;
-  --grass: #4cd964;
-  --withered-bg: #e2dcc8; /* 시든 흙 색상 */
-  --withered-grass: #8d775f; /* 시든 풀 색상 */
-}
-
-/* 잔디 셀 기본 스타일 및 애니메이션 */
-.cell {
-  aspect-ratio: 1;
-  border-radius: 8px;
-  background: #ffffff; /* 미수확 상태 */
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative;
-  border: 1px solid var(--light-gray);
-}
-
-/* 수확 성공: 생생한 잔디 */
-.cell.active {
-  background: var(--grass) !important;
-  box-shadow: 0 4px 12px rgba(76, 217, 100, 0.4);
-  transform: scale(1.05);
-  border: none;
-  animation: grow 0.5s ease-out;
-}
-
-/* 실패: 시든 잔디 (재진입 유도) */
-.cell.withered {
-  background: var(--withered-bg) !important;
-  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.05);
-  border: none;
-}
-
-.cell.withered::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 50%;
-  height: 2px;
-  background: var(--withered-grass);
-  transform: translate(-50%, -50%) rotate(-15deg);
-  border-radius: 2px;
-  opacity: 0.6;
-}
-
-@keyframes grow {
-  0% {
-    transform: scale(0.5);
-    filter: brightness(1.5);
-  }
-  100% {
-    transform: scale(1.05);
-    filter: brightness(1);
-  }
+.noti-card p {
+  font-size: 12px;
+  color: var(--gray);
+  font-weight: 500;
 }
