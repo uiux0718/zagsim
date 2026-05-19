@@ -1,0 +1,409 @@
+:root {
+
+  --purple: #7c6dff;
+
+  --light-purple: #f3f1ff;
+
+  --white: #ffffff;
+
+  --green: #4caf50;
+
+  --red: #ff5252;
+
+  --text-sub: #8e8e93;
+
+}
+
+​
+
+* {
+
+  box-sizing: border-box;
+
+  margin: 0;
+
+  padding: 0;
+
+  font-family: "Pretendard", sans-serif;
+
+  letter-spacing: -0.03em;
+
+}
+
+body {
+
+  background: #d1d1d6;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  min-height: 100vh;
+
+  overflow: hidden;
+
+}
+
+​
+
+.iphone-frame {
+
+  width: 375px;
+
+  height: 812px;
+
+  background: var(--white);
+
+  border-radius: 50px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border: 8px solid #333;
+
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3);
+
+}
+
+​
+
+.view {
+
+  display: none;
+
+  height: 100%;
+
+  width: 100%;
+
+  position: absolute;
+
+  background: white;
+
+}
+
+.view.active {
+
+  display: flex;
+
+  flex-direction: column;
+
+  animation: fadeIn 0.4s ease;
+
+}
+
+@keyframes fadeIn {
+
+  from {
+
+    opacity: 0;
+
+  }
+
+  to {
+
+    opacity: 1;
+
+  }
+
+}
+
+​
+
+.inner {
+
+  padding: 24px;
+
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+.content-shift-down {
+
+  padding-top: 80px;
+
+}
+
+.flex-center {
+
+  justify-content: center;
+
+  align-items: center;
+
+  text-align: center;
+
+}
+
+​
+
+/* UI 요소 */
+
+.purple {
+
+  color: var(--purple);
+
+}
+
+.custom-input {
+
+  width: 100%;
+
+  padding: 20px;
+
+  border-radius: 20px;
+
+  border: 1px solid #eee;
+
+  background: #f9f9f9;
+
+  margin-bottom: 12px;
+
+  outline: none;
+
+}
+
+.btn-main {
+
+  width: 100%;
+
+  padding: 20px;
+
+  border-radius: 20px;
+
+  background: var(--purple);
+
+  color: white;
+
+  border: none;
+
+  font-weight: 700;
+
+  font-size: 16px;
+
+  cursor: pointer;
+
+}
+
+.sub-header {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+
+  margin-bottom: 30px;
+
+}
+
+.back-btn {
+
+  background: none;
+
+  border: none;
+
+  font-size: 24px;
+
+  cursor: pointer;
+
+}
+
+​
+
+/* 알림 설정 카드 스타일 */
+
+.noti-item-card {
+
+  background: #f9f9f9;
+
+  padding: 20px;
+
+  border-radius: 25px;
+
+  margin-bottom: 15px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+}
+
+.noti-text strong {
+
+  display: block;
+
+  font-size: 16px;
+
+  margin-bottom: 4px;
+
+  color: #333;
+
+}
+
+.noti-text span {
+
+  font-size: 12px;
+
+  color: var(--text-sub);
+
+}
+
+.noti-control {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+}
+
+.time-label {
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  color: var(--purple);
+
+  background: white;
+
+  padding: 4px 10px;
+
+  border-radius: 10px;
+
+}
+
+​
+
+/* 토글 스위치 */
+
+.switch {
+
+  position: relative;
+
+  display: inline-block;
+
+  width: 46px;
+
+  height: 24px;
+
+  background: #e0e0e0;
+
+  border-radius: 20px;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+
+}
+
+input[type="checkbox"] {
+
+  display: none;
+
+}
+
+input:checked + .switch {
+
+  background: var(--purple);
+
+}
+
+.switch::after {
+
+  content: "";
+
+  position: absolute;
+
+  width: 20px;
+
+  height: 20px;
+
+  background: white;
+
+  border-radius: 50%;
+
+  top: 2px;
+
+  left: 2px;
+
+  transition: 0.3s;
+
+}
+
+input:checked + .switch::after {
+
+  transform: translateX(22px);
+
+}
+
+​
+
+/* 혼구녕 & 칭찬 효과 (생략 없이 유지) */
+
+.panic-layer {
+
+  position: absolute;
+
+  top: 0;
+
+  left: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  background: rgba(255, 0, 0, 0.93);
+
+  display: none;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  z-index: 100;
+
+  color: white;
+
+  text-align: center;
+
+}
+
+.shake {
+
+  animation: shake 0.1s infinite;
+
+}
+
+@keyframes shake {
+
+  0% {
+
+    transform: translate(1px, 1px);
+
+  }
+
+  50% {
+
+    transform: translate(-1px, -2px);
+
+  }
+
+}
+
+.praise-bg {
+
+  background: linear-gradient(135deg, #fff9c4 0%, #ffffff 100%);
+
+}
