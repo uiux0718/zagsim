@@ -37,7 +37,7 @@
         overflow: hidden;
       }
 
-      /* 1. 기본값: 데스크탑 & 태블릿 (화면 중앙에 아이폰 프레임 배치) */
+      /* 기본값: 데스크탑 & 태블릿 (화면 중앙에 아이폰 프레임 배치) */
       .iphone {
         width: 375px;
         height: 812px;
@@ -51,19 +51,19 @@
         transition: all 0.3s ease;
       }
 
-      /* 2. 모바일 브레이크포인트 (화면 폭이 480px 이하일 때 완전히 꽉 찬 화면으로 변경) */
+      /* 모바일 브레이크포인트 (화면 폭이 480px 이하일 때 화면 꽉 차게 변경) */
       @media (max-width: 480px) {
         body, html {
-          background-color: var(--bg); /* 모바일에서는 배경을 흰색으로 변경 */
+          background-color: var(--bg);
         }
         .iphone {
           width: 100% !important;
           height: 100% !important;
-          border-radius: 0px !important; /* 모바일 꽉 채우기 위해 라운드 제거 */
+          border-radius: 0px !important;
           box-shadow: none !important;
         }
         .screen {
-          padding: 44px 20px 100px !important; /* 모바일 화면에 맞춘 상하 여백 최적화 */
+          padding: 44px 20px 100px !important;
         }
       }
 
@@ -71,7 +71,6 @@
          컴포넌트 세부 스타일
          ========================================== */
       
-      /* 스크린 기본 구조 */
       .screen {
         display: none; 
         flex-direction: column;
@@ -83,7 +82,7 @@
       }
 
       .screen.active {
-        display: flex; /* active 클래스가 붙은 화면만 노출 */
+        display: flex;
       }
 
       /* 상단 내비게이션 헤더 */
@@ -92,7 +91,7 @@
         align-items: center;
         justify-content: space-between;
         margin-bottom: 32px;
-        min-height: 40px;
+        min-height: 44px;
         width: 100%;
       }
 
@@ -107,12 +106,21 @@
         text-align: left;
       }
 
+      /* 로고 정렬을 위한 타이틀 공간 박스 */
       .header-title {
-        font-size: 17px;
-        font-weight: 800;
-        color: var(--text);
-        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         flex: 1;
+        height: 100%;
+      }
+
+      /* 엑박 방지 및 중앙 정렬 처리된 로고 스타일 */
+      .logo-img {
+        height: 32px;         /* 피그마 레이아웃에 맞춘 적정 높이 */
+        width: auto;
+        object-fit: contain;
+        display: block;
       }
 
       /* 타이틀 및 캡션 */
@@ -134,7 +142,7 @@
         font-weight: 500;
       }
 
-      /* 폼 입력 필드 레이아웃 */
+      /* 폼 입력 필드 */
       .form-group {
         display: flex;
         flex-direction: column;
@@ -180,7 +188,7 @@
         background-color: var(--bg);
       }
 
-      /* 피그마 알림 설정 카드 조작 구역 */
+      /* 알림 설정 카드 */
       .noti-container {
         display: flex;
         flex-direction: column;
@@ -251,7 +259,7 @@
         left: 22px;
       }
 
-      /* 액션 버튼 시스템 (하단 배치 강제) */
+      /* 액션 버튼 */
       .btn-container {
         margin-top: auto; 
         display: flex;
@@ -287,7 +295,7 @@
         border: none;
       }
 
-      /* 기록 카드 카테고리 버튼 */
+      /* 기록 카드 카테고리 태그 */
       .tag-container {
         display: flex;
         flex-wrap: wrap;
@@ -356,7 +364,9 @@
       <section id="s-login" class="screen active">
         <header class="header">
           <button class="header-action"></button>
-          <span class="header-title">로그인</span>
+          <div class="header-title">
+            <img src="./logo.png" alt="작심농장 로고" class="logo-img">
+          </div>
           <div style="width: 60px;"></div>
         </header>
 
@@ -383,7 +393,9 @@
       <section id="s-signup" class="screen">
         <header class="header">
           <button class="header-action" onclick="navigateTo('s-login')">이전</button>
-          <span class="header-title">회원가입</span>
+          <div class="header-title">
+            <img src="./logo.png" alt="작심농장 로고" class="logo-img">
+          </div>
           <div style="width: 60px;"></div>
         </header>
 
@@ -414,7 +426,9 @@
       <section id="s-noti" class="screen">
         <header class="header">
           <button class="header-action" onclick="navigateTo('s-login')">홈으로</button>
-          <span class="header-title">알림 설정</span>
+          <div class="header-title">
+            <img src="./logo.png" alt="작심농장 로고" class="logo-img">
+          </div>
           <div style="width: 60px;"></div>
         </header>
 
@@ -457,7 +471,9 @@
       <section id="s-record" class="screen">
         <header class="header">
           <button class="header-action" onclick="navigateTo('s-noti')">이전</button>
-          <span class="header-title">오늘의 기록 등록</span>
+          <div class="header-title">
+            <img src="./logo.png" alt="작심농장 로고" class="logo-img">
+          </div>
           <div style="width: 60px;"></div>
         </header>
 
@@ -496,7 +512,6 @@
     </div>
 
     <script>
-      // 1. 네비게이션 화면 라우터 기능
       function navigateTo(screenId) {
         document.querySelectorAll('.screen').forEach(screen => {
           screen.classList.remove('active');
@@ -504,13 +519,11 @@
         document.getElementById(screenId).classList.add('active');
       }
 
-      // 2. 알림 설정 스위치 오글 기능
       function toggleNoti(id) {
         const toggleBtn = document.getElementById(id);
         toggleBtn.classList.toggle('on');
       }
 
-      // 3. 기록화면 카테고리 태그 단일 선택 기능
       function selectTag(element) {
         const siblings = element.parentNode.querySelectorAll('.tag-btn');
         siblings.forEach(btn => btn.classList.remove('active'));
