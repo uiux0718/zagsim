@@ -38,3 +38,39 @@
   color: var(--gray);
   font-weight: 500;
 }
+/* ==========================================
+   작심농장 생동감 애니메이션 시스템
+   ========================================== */
+
+/* 1. 잔디가 뿅! 하고 자라나는 새싹 애니메이션 */
+@keyframes sprout {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.2); } /* 살짝 과장되게 커졌다가 */
+  100% { transform: scale(1); opacity: 1; } /* 제자리로 안착 (통통 튀는 느낌) */
+}
+
+.cell-grow {
+  animation: sprout 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* 2. 3일 연속 성공(수확 주기) 시 잔디가 반짝이는 효과 */
+@keyframes goldenGlow {
+  0% { box-shadow: 0 0 0px rgba(124, 109, 255, 0); }
+  50% { box-shadow: 0 0 15px rgba(124, 109, 255, 0.7); border-color: var(--primary); }
+  100% { box-shadow: 0 0 0px rgba(124, 109, 255, 0); }
+}
+
+.milestone-glow {
+  animation: goldenGlow 1.5s ease-in-out infinite;
+}
+
+/* 3. 토지 확장 시 대시보드 카드가 웅장하게 확장되는 효과 */
+@keyframes landExpand {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.05); filter: brightness(1.1); }
+  100% { transform: scale(1); }
+}
+
+.dashboard-expand {
+  animation: landExpand 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
