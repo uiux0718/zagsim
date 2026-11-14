@@ -1,28 +1,76 @@
-:root{color-scheme:dark;--bg:#101c16;--panel:#1c2d23;--ink:#fff6de;--muted:#d1d9be;--lime:#e3f99a;--line:#50654b}
-*{box-sizing:border-box}body{margin:0;color:var(--ink);background:radial-gradient(ellipse at 15% 0,#35452d,var(--bg) 60%);font:16px/1.6 "Malgun Gothic",sans-serif;min-height:100vh}
-.shell{width:min(1180px,100%);margin:auto;padding:24px clamp(14px,4vw,40px) 40px}header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:26px;color:var(--muted);font-size:13px}.brand{display:flex;align-items:center;gap:9px;background:transparent;border:0;color:var(--ink);font-size:20px;font-weight:900;padding:0}.brand img{width:40px;height:40px;object-fit:contain;border-radius:10px;background:#f8efcc}
-.layout{display:grid;grid-template-columns:1.15fr 1fr;min-height:550px;overflow:hidden;border:1px solid var(--line);border-radius:28px;box-shadow:0 24px 60px #080e0a88}.panel{background:var(--panel);padding:clamp(22px,5vw,56px);display:flex;flex-direction:column;justify-content:center;min-width:0}.eyebrow{color:var(--lime);font-weight:800;font-size:13px}h1{font-size:clamp(32px,5vw,60px);line-height:1.13;letter-spacing:-.075em;margin:10px 0 16px;overflow-wrap:break-word}h1:focus{outline:none}p{margin:0 0 12px;color:var(--muted)}small{color:var(--muted);font-size:12px}
-button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid #fff;outline-offset:3px}.options{display:grid;gap:9px;margin:12px 0}.option{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;text-align:left;color:var(--ink);background:#293c2e;border:1px solid var(--line);border-radius:13px;padding:10px 14px;width:100%;transition:background .2s}.option:hover{background:#3e553c}.option span:first-child{font-size:23px}.option small{display:block}.primary{border:0;border-radius:13px;background:var(--lime);color:#162514;font-weight:900;padding:13px 16px}.primary:hover{background:#f1ffc6}.back{margin-top:10px;background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:13px;padding:9px}.streak{display:flex;gap:8px;margin:12px 0 24px}.streak span{border:1px solid var(--line);border-radius:18px;padding:4px 12px;color:var(--muted)}.streak .filled{background:#c9e887;color:#152414;border-color:transparent;font-weight:800}
-.garden{--petal:#ffe475;--glow:#ffbb58;--bloom:#855029;position:relative;isolation:isolate;overflow:hidden;min-height:260px;background:linear-gradient(157deg,#314a3b 2%,#849a60 58%,#ead293 100%)}.garden.pink{--petal:#ffb1cf;--glow:#f472aa;--bloom:#a14561}.garden.mint{--petal:#c9ef89;--glow:#a4dd62;--bloom:#5c6c2d}.sun{position:absolute;top:13%;right:12%;width:23%;aspect-ratio:1;border-radius:50%;background:#fff4ba;box-shadow:0 0 58px 20px #ffe2a98c}.hill{position:absolute;inset:62% -27% -30% -13%;border-radius:50%;background:#657943;transform:rotate(12deg)}.hill.second{inset:69% -22% -30% -34%;background:#435d36;transform:rotate(-10deg)}.soil{position:absolute;z-index:1;left:30%;right:30%;bottom:15%;height:8%;border-radius:50%;background:#343625;box-shadow:0 7px 12px #25302277}
-.plant{position:absolute;z-index:2;width:min(48%,240px);height:65%;left:50%;bottom:20%;transform:translateX(-50%);transform-origin:50% 100%}.stem{position:absolute;left:47%;bottom:0;width:6%;height:80%;border-radius:90% 90% 40% 40%;background:linear-gradient(90deg,#284a2d,#89a84d)}.leaf{position:absolute;width:39%;height:19%;background:linear-gradient(140deg,#e4ee92,#648d40 65%,#325e37);border-radius:0 100% 0 100%;transform-origin:100% 100%;box-shadow:inset 0 -2px 0 #304c3055}.leaf.left{right:50%;bottom:24%;transform:rotate(-9deg)}.leaf.right{left:50%;bottom:38%;transform:scaleX(-1) rotate(-14deg);transform-origin:0 100%}.leaf.top{right:50%;bottom:55%;transform:scale(.67) rotate(-16deg)}.flower{position:absolute;width:58%;aspect-ratio:1;top:13%;left:50%;transform:translate(-50%,-50%);filter:drop-shadow(0 0 17px #fff1aa55)}.flower i{position:absolute;inset:4% 39% 50%;border-radius:70% 70% 45% 45%;background:linear-gradient(var(--petal),var(--glow));transform-origin:50% 100%;transform:rotate(var(--r)) translateY(-28%)}.flower b{position:absolute;inset:30%;border-radius:50%;background:radial-gradient(circle at 34% 29%,#fff1aa 0 7%,transparent 9%),radial-gradient(circle at 37% 32%,var(--glow),var(--bloom) 72%);box-shadow:0 2px 8px #643b3c77}
-.stage-sprout .plant{transform:translateX(-50%) scale(.57)}.stage-leaves .plant{transform:translateX(-50%) scale(.81)}.stage-rest .plant{transform:translateX(-50%) rotate(-16deg) scale(.5);filter:saturate(.35)}.garden:not(.stage-bloom) .flower,.stage-sprout .leaf.top,.stage-rest .leaf.top{display:none}
-.spark{position:absolute;z-index:3;left:var(--x);top:var(--y);width:7px;height:7px;background:#fff2b5;border-radius:2px;transform:rotate(var(--turn));box-shadow:0 0 13px #fff9b3;opacity:.54}.animated .spark{animation:scatter 1.35s var(--delay) both}.animated .stem,.animated .leaf{animation:unfurl .75s both;transform-origin:50% 100%}.animated .flower{animation:bloom .9s .35s both}.animated .sun{animation:shine 1.7s both}
-@keyframes scatter{0%{translate:0 35px;scale:0;opacity:0}35%{scale:1.5;opacity:1}100%{translate:0 calc(-1 * var(--rise));scale:.6;opacity:.5}}@keyframes unfurl{from{scale:.35;opacity:.25}to{scale:1;opacity:1}}@keyframes bloom{from{scale:0;rotate:-65deg}65%{scale:1.17}to{scale:1;rotate:0deg}}@keyframes shine{40%{box-shadow:0 0 90px 34px #fff1bdaa}}
-@media(max-width:720px){.layout{grid-template-columns:1fr;min-height:0}.garden{min-height:clamp(235px,55vw,350px)}.plant{width:min(43%,190px)}.panel{padding:22px}.shell{padding-top:12px}header{margin-bottom:13px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
-#plant-form{display:grid;gap:16px;margin-top:10px}
-#plant-form>label{display:grid;gap:5px;font-weight:700}
-#plant-form input[name=name]{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#101c16;color:var(--ink);font:inherit}
-#plant-form fieldset{padding:0;border:0;margin:0}
-#plant-form legend{margin-bottom:7px;font-weight:700}
-.crop-options{display:flex;flex-wrap:wrap;gap:8px}
-.crop-options label{display:flex;align-items:center;gap:4px;padding:7px;border:1px solid var(--line);border-radius:9px;cursor:pointer}
-.crop-options label:has(:checked){background:#3e553c}
-.primary:disabled{background:#344d36;color:var(--ink);cursor:default}
-.farm-status{margin-top:12px;min-height:1.6em}
-.stage-seed .plant{visibility:hidden}
-.seed{display:none;position:absolute;z-index:2;left:50%;bottom:19%;width:23px;height:12px;border-radius:80% 40%;background:#f9ce72;transform:translateX(-50%) rotate(-26deg);box-shadow:0 0 15px #ffda7b}
-.stage-seed .seed{display:block}
-.waterfall{position:absolute;z-index:4;left:50%;top:27%;height:5px;width:5px;border-radius:50%;opacity:0;background:#b9efff;box-shadow:-41px 9px 0 #b9efff,-19px -18px 0 #f4ffff,21px -5px 0 #b9efff,40px 14px 0 #d7faff,9px 25px 0 #b9efff}
-.animated .waterfall{animation:water-drop .7s ease-in both}
-.animated.bloom .spark{animation-delay:calc(.45s + var(--delay));background:var(--petal)}
-@keyframes water-drop{0%{opacity:0;translate:0 -20px}20%{opacity:1}100%{opacity:0;translate:0 150px}}
+
+/* ==========================================
+   알림 설정 화면 원래 디자인 완벽 복원
+   ========================================== */
+
+/* 1. 알림 설정 카드 박스 (회색 배경 및 둥근 모서리) */
+.noti-card {
+  background-color: var(--light-gray); /* 시스템 연한 회색 (#f2f2f7) 적용 */
+  border-radius: 20px;                 /* 다른 카드들과 통일감 있는 라운드 값 */
+  padding: 20px 24px;                  /* 내부 여백을 주어 답답함 해소 */
+  margin-top: 12px;                    /* 카드 사이의 상단 간격 */
+  
+  /* 2. 정렬 시스템: 글자는 왼쪽, 토글 스위치는 오른쪽 끝 배치 */
+  display: flex;
+  justify-content: space-between;      /* 양 끝 정렬 핵심 속성 */
+  align-items: center;                 /* 상하 수직 정가운데 정렬 */
+  
+  transition: background-color 0.2s;
+}
+
+/* 3. 텍스트 레이아웃 제어 (글자 정렬이 왼쪽으로 고정되도록) */
+.noti-card > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;                            /* 제목과 하단 설명 사이의 간격 */
+  text-align: left;                    /* 텍스트 왼쪽 정렬 강제 */
+}
+
+/* 4. 타이틀 및 설명 글씨 상세 스타일 */
+.noti-card h4 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.noti-card p {
+  font-size: 12px;
+  color: var(--gray);
+  font-weight: 500;
+}
+/* ==========================================
+   작심농장 생동감 애니메이션 시스템
+   ========================================== */
+
+/* 1. 잔디가 뿅! 하고 자라나는 새싹 애니메이션 */
+@keyframes sprout {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.2); } /* 살짝 과장되게 커졌다가 */
+  100% { transform: scale(1); opacity: 1; } /* 제자리로 안착 (통통 튀는 느낌) */
+}
+
+.cell-grow {
+  animation: sprout 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* 2. 3일 연속 성공(수확 주기) 시 잔디가 반짝이는 효과 */
+@keyframes goldenGlow {
+  0% { box-shadow: 0 0 0px rgba(124, 109, 255, 0); }
+  50% { box-shadow: 0 0 15px rgba(124, 109, 255, 0.7); border-color: var(--primary); }
+  100% { box-shadow: 0 0 0px rgba(124, 109, 255, 0); }
+}
+
+.milestone-glow {
+  animation: goldenGlow 1.5s ease-in-out infinite;
+}
+
+/* 3. 토지 확장 시 대시보드 카드가 웅장하게 확장되는 효과 */
+@keyframes landExpand {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.05); filter: brightness(1.1); }
+  100% { transform: scale(1); }
+}
+
+.dashboard-expand {
+  animation: landExpand 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}

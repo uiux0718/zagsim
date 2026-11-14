@@ -1,140 +1,260 @@
-const crops = [
-  { name: '해바라기', icon: '🌻', hue: 'gold' },
-  { name: '분홍 데이지', icon: '🌸', hue: 'pink' },
-  { name: '초록 완두', icon: '🫛', hue: 'mint' }
-];
-const storageKey = 'jaksim-farm-v1';
-const app = document.querySelector('#app');
-const feedback = document.querySelector('#farm-status');
-let goals = [];
-try {
-  goals = JSON.parse(localStorage.getItem(storageKey)) || [];
-  if (!Array.isArray(goals)) goals = [];
-} catch {}
-let goal;
-let screen = goals.length ? 'choose' : 'new';
-let celebration = '';
+// ==========================================
+// 작심농장 핵심 비즈니스 로직 및 UX 시스템
+// ==========================================
 
-function dateKey(offset = 0) {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  return [date.getFullYear(), date.getMonth() + 1, date.getDate()]
-    .map(value => String(value).padStart(2, '0')).join('-');
+// 1. 상태 객체 초기화 (LocalStorage 연동)
+let state = JSON.parse(localStorage.getItem('zagsim_farm_state')) || {
+  total: 0,          // 총 수확 횟수
+  lands: 1,          // 보유 중인 토지 수
+  streak: 0,         // 현재 연속 수확 회차 (잔디 개수)
+  history: [],       // 수확 타임라인 기록
+  lastHarvest: new Date().toISOString(), // 마지막 수확 시간
+  notiRemind: true,  // 수확 리마인더 토글 상태
+  notiPenalty: true, // 패널티 경고 토글 상태
+};
+
+// 헬퍼 함수: 마지막 수확일을 Date 객체로 반환
+function getLastHarvestDate() {
+  return new Date(state.lastHarvest);
 }
 
-function streakFor(item) {
-  let offset = item.days.includes(dateKey()) ? 0 : -1;
-  const last = offset;
-  while (item.days.includes(dateKey(offset))) offset--;
-  return last - offset;
+// 헬퍼 함수: 현재 상태를 로컬 스토리지에 저장
+function saveState() {
+  localStorage.setItem('zagsim_farm_state', JSON.stringify(state));
 }
 
-function save(next) {
-  try {
-    localStorage.setItem(storageKey, JSON.stringify(next));
-    goals = next;
-    return true;
-  } catch {
-    feedback.textContent = '기록을 저장할 수 없어요. 브라우저 저장 공간을 확인한 뒤 다시 시도해 주세요.';
-    return false;
+// 2. 화면 이동 제어 함수
+function go(id) {
+  if (id === 's-home' && document.getElementById('s-login').classList.contains('active')) {
+    const email = document.querySelector('#s-login input[type="email"]').value;
+    if (!email.includes('@')) {
+      showToast("올바른 이메일 형식을 입력해주세요.");
+      return;
+    }
+  }
+
+  document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+
+  const isAuth = id === "s-login" || id === "s-join";
+  document.getElementById("main-nav").style.display = isAuth ? "none" : "flex";
+
+  const navItems = document.querySelectorAll(".nav-item");
+  if (id === "s-home") {
+    navItems[0].classList.add("active");
+    navItems[1].classList.remove("active");
+    navItems[0].querySelector(".nav-dot").style.opacity = 1;
+    navItems[1].querySelector(".nav-dot").style.opacity = 0;
+    checkSystem(); // 홈 화면 진입 시 시스템 상태 체크 및 알림 트리거
+  } else if (id === "s-mypage") {
+    navItems[1].classList.add("active");
+    navItems[0].classList.remove("active");
+    navItems[1].querySelector(".nav-dot").style.opacity = 1;
+    navItems[0].querySelector(".nav-dot").style.opacity = 0;
+    renderMypage();
+  } else if (id === "s-noti") {
+    renderNotiToggleUI();
   }
 }
 
-const escapeHtml = value => value.replace(/[&<>"']/g, char =>
-  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+// 3. 커스텀 습관 카드 생성 함수
+function createNewHabit() {
+  const input = document.getElementById("habit-input");
+  const name = input.value.trim();
+  if (!name) return;
 
-function garden(stage, animated = false) {
-  return `<div class="garden ${crops[goal?.crop]?.hue || 'gold'} stage-${stage} ${animated ? 'animated ' + animated : ''}" aria-hidden="true">
-    <div class="sun"></div><div class="hill"></div><div class="hill second"></div>
-    <div class="plant"><div class="stem"></div><i class="leaf left"></i><i class="leaf right"></i><i class="leaf top"></i>
-    <div class="flower">${Array.from({length:12}, (_,i)=>`<i style="--r:${i*30}deg"></i>`).join('')}<b></b></div></div>
-    <div class="soil"></div><div class="seed"></div><div class="waterfall"></div>
-    ${Array.from({length:20},(_,i)=>`<i class="spark" style="--x:${8+(i*29)%84}%;--y:${9+(i*17)%67}%;--delay:${(i%8)*0.09}s;--rise:${30+(i%5)*14}px;--turn:${i*37}deg"></i>`).join('')}
-  </div>`;
+  const container = document.getElementById("habit-container");
+  const card = document.createElement("div");
+  card.className = "habit-card";
+  card.onclick = () => harvest(name);
+  card.innerHTML = `<div class="habit-icon-box"><div class="habit-dot"></div></div><p class="habit-name">${name}</p>`;
+
+  container.appendChild(card);
+  input.value = "";
+  closeAddModal();
+  showToast("기록 카드가 추가되었습니다. 🃏");
 }
 
-function render() {
-  const streak = goal ? streakFor(goal) : 0;
-  const stage = streak >= 3 ? 'bloom' : streak === 2 ? 'leaves' : streak === 1 ? 'sprout' : 'seed';
-  const recorded = goal?.days.includes(dateKey());
-  let panel;
-  if (screen === 'new') {
-    panel = `<h1>${goals.length ? '새 씨앗을 심어요' : '첫 씨앗을 심어요'}</h1><p>매일 하고 싶은 습관을 정해 주세요. 3일 연속 실천하면 작물이 활짝 자라요.</p>
-      <form id="plant-form"><label>습관 이름<input name="name" required maxlength="60" placeholder="예: 독서 10분"></label>
-      <fieldset><legend>심을 작물</legend><div class="crop-options">${crops.map((crop, index) =>
-        `<label><input type="radio" name="crop" value="${index}" ${index === 0 ? 'checked' : ''}><span>${crop.icon} ${crop.name}</span></label>`).join('')}</div></fieldset>
-      <button class="primary">씨앗 심기</button></form>
-      ${goals.length ? '<button class="back" data-action="choose">농장으로 돌아가기</button>' : ''}`;
-  } else if (screen === 'choose') {
-    panel = `<h1>내 작심농장</h1><p>습관을 골라 오늘의 실천을 기록해 보세요.</p><div class="options">${goals.map(item =>
-      `<button class="option" data-goal="${item.id}"><span aria-hidden="true">${crops[item.crop].icon}</span><span><strong>${escapeHtml(item.name)}</strong><small>${streakFor(item)}일 연속 · ${item.harvests}회 수확</small></span><span aria-hidden="true">↗</span></button>`).join('')}</div>
-      <button class="primary" data-action="new">＋ 새 씨앗 심기</button>`;
+// 4. [기능 구현] 습관 수확 처리 함수 (성공 주기 및 토지 보상)
+function harvest(name) {
+  const now = new Date();
+  const hoursSinceLastHarvest = (now - getLastHarvestDate()) / (1000 * 60 * 60);
+  
+  // [룰 변형 및 복구 로직] 3일(72시간) 이상 지나 시들어있던 상태였다면?
+  // 완벽주의자의 자괴감을 깨고 "새로운 시작"을 부드럽게 연결
+  if (hoursSinceLastHarvest >= 72) {
+    state.streak = 0; // 시든 상태에서 물을 주면 0부터 다시 파릇파릇하게 시작
+    showToast("💧 시든 잔디에 물을 주어 다시 살려냈습니다!");
+  }
+
+  // 1) 매일 기록하면 잔디가 한 칸씩 자라남
+  state.total++;
+  state.streak++;
+  state.lastHarvest = now.toISOString();
+  
+  // 2) 30회 수확마다 새로운 토지를 보상받음
+  let isLandExpanded = false;
+  if (state.total > 0 && state.total % 30 === 0) {
+    state.lands++;
+    isLandExpanded = true;
+  }
+
+  // 타임라인 데이터 포맷팅
+  const logHours = String(now.getHours()).padStart(2, '0');
+  const logMinutes = String(now.getMinutes()).padStart(2, '0');
+  state.history.unshift({
+    name,
+    time: `${now.getMonth() + 1}월 ${now.getDate()}일 ${logHours}:${logMinutes}`,
+  });
+  
+  saveState();
+  checkSystem(); // 그리드 리렌더링 및 상태 최신화
+
+  // 애니메이션 트리거: 방금 자란 잔디 세포에 팝핑 효과 부여
+  let activeCount = state.streak % 7;
+  if (state.streak > 0 && activeCount === 0) activeCount = 7;
+  const cells = document.querySelectorAll("#grid > div");
+  if(cells[activeCount - 1]) {
+    cells[activeCount - 1].classList.add("cell-grow");
+  }
+
+  // 토지 보상 달성 시 대시보드 확장 애니메이션 실행
+  if (isLandExpanded) {
+    const dashboard = document.querySelector(".dashboard-card");
+    dashboard.classList.add("dashboard-expand");
+    setTimeout(() => {
+      dashboard.classList.remove("dashboard-expand");
+      alert(`🎉 대단해요! 30회 수확을 달성하여 새로운 토지(${state.lands}호 차)를 개간했습니다!`);
+    }, 800);
   } else {
-    const crop = crops[goal.crop];
-    const title = celebration === 'bloom' ? '3일 연속 성공!' : celebration === 'water' ? '오늘도 한 뼘 자랐어요!' : escapeHtml(goal.name);
-    const message = celebration === 'bloom' ? `${crop.name}이 활짝 자라 수확했어요!` :
-      recorded ? '오늘의 실천을 기록했어요. 내일 다시 물을 주세요.' :
-      streak ? '오늘도 실천을 마쳤다면 물을 주세요.' : '오늘의 실천부터 시작해 보세요. 수확 기록은 농장에 남아요.';
-    panel = `<p class="eyebrow">${crop.name} · 누적 수확 ${goal.harvests}회</p><h1>${title}</h1><p>${message}</p>
-      <div class="streak" aria-label="연속 실천 ${streak}일">${[1, 2, 3].map(n =>
-        `<span class="${n <= streak ? 'filled' : ''}">${n}일${n <= streak ? ' ✓' : ''}</span>`).join('')}</div>
-      <button class="primary" data-action="record" ${recorded ? 'disabled' : ''}>${recorded ? '오늘 물 주기 완료' : '💧 실천 완료 · 물 주기'}</button>
-      <button class="back" data-action="choose">농장 둘러보기</button>`;
+    showToast(`${name} 수확 완료! 🌿`);
   }
-  app.innerHTML = `<section class="layout">${garden(screen === 'farm' ? stage : 'bloom', celebration)}<div class="panel">${panel}</div></section>`;
-  const title = app.querySelector('h1');
-  title.tabIndex = -1;
-  return title;
 }
 
-app.addEventListener('submit', event => {
-  if (event.target.id !== 'plant-form') return;
-  event.preventDefault();
-  const fields = new FormData(event.target);
-  const name = fields.get('name').trim();
-  if (!name) {
-    feedback.textContent = '습관 이름을 입력해 주세요.';
-    return;
-  }
-  const item = { id: crypto.randomUUID?.() || String(Date.now()), name, crop: Number(fields.get('crop')), days: [], harvests: 0 };
-  if (!save([...goals, item])) return;
-  goal = item;
-  screen = 'farm';
-  feedback.textContent = '씨앗을 심었어요.';
-  render().focus();
-});
+// 5. [기능 구현] 시스템 시간 체크 및 시뮬레이션 알림(푸시) 트리거
+function checkSystem() {
+  const now = new Date();
+  const hoursSinceLastHarvest = (now - getLastHarvestDate()) / (1000 * 60 * 60);
+  
+  // 3일(72시간) 이상 미수확 시 잔디 시듦 여부 판정
+  const isWithered = hoursSinceLastHarvest >= 72;
+  
+  // 그리드 화면 리렌더링
+  renderGrid(isWithered);
 
-document.addEventListener('click', event => {
-  const button = event.target.closest('button');
-  if (!button) return;
-  celebration = '';
-  if (button.dataset.goal) {
-    goal = goals.find(item => item.id === button.dataset.goal);
-    screen = 'farm';
-  } else if (button.dataset.action === 'record' && screen === 'farm') {
-    const today = dateKey();
-    if (goal.days.includes(today)) return;
-    const updated = { ...goal, days: [...goal.days, today] };
-    const streak = streakFor(updated);
-    if (streak === 3) updated.harvests++;
-    if (!save(goals.map(item => item.id === updated.id ? updated : item))) return;
-    goal = updated;
-    celebration = streak === 3 ? 'bloom' : 'water';
-    feedback.textContent = streak === 3 ? '3일 연속 성공! 작물을 수확했어요.' : '오늘의 실천을 기록했어요.';
-  } else if (button.dataset.action === 'choose' || button.dataset.action === 'new') {
-    goal = undefined;
-    screen = button.dataset.action === 'new' || !goals.length ? 'new' : 'choose';
-  } else return;
-  render().focus();
-});
-
-let shownDate = dateKey();
-function refreshDay() {
-  if (dateKey() === shownDate || screen === 'new') return;
-  shownDate = dateKey();
-  celebration = '';
-  render();
+  // [푸시 알림 구현] 실제 앱 환경의 푸시 알림을 브라우저 토스트/인앱 메시지로 정교하게 시뮬레이션
+  setTimeout(() => {
+    // 1) 패널티 경고: 3일간 미수확 시 경고 알림 (토글이 켜져있을 때만)
+    if (isWithered && state.notiPenalty) {
+      showToast("🚨 [패널티 경고] 3일간 수확이 없어 잔디가 시들고 있어요! 물을 주세요!");
+      return;
+    }
+    
+    // 2) 수확 리마인더: 24시간 동안 수확이 없을 때 매일 잊지 않도록 푸시 (토글이 켜져있을 때만)
+    if (hoursSinceLastHarvest >= 24 && hoursSinceLastHarvest < 72 && state.notiRemind) {
+      showToast("⏰ [수확 리마인더] 오늘 아직 수확하지 않았어요! 오늘의 잔디를 심어보세요.");
+    }
+  }, 1000);
 }
-document.addEventListener('visibilitychange', refreshDay);
-setInterval(refreshDay, 30000);
-render();
+
+// 6. 메인 대시보드 잔디 격자 렌더링 함수
+function renderGrid(isWithered = false) {
+  const grid = document.getElementById("grid");
+  if (!grid) return;
+  grid.innerHTML = "";
+  
+  let activeCount = state.streak % 7;
+  if (state.streak > 0 && activeCount === 0) {
+    activeCount = 7; 
+  }
+
+  for (let i = 0; i < 7; i++) {
+    const cell = document.createElement("div");
+    const isActive = i < activeCount;
+    
+    // 반응형 스퀘어 격자 스타일 빌딩
+    cell.style.cssText = `
+      aspect-ratio: 1; 
+      border-radius: 10px; 
+      background: ${isActive ? (isWithered ? "var(--withered)" : "var(--grass)") : "#ffffff"}; 
+      border: 1.5px solid var(--light-gray);
+      transition: background 0.3s ease, transform 0.2s ease;
+    `;
+
+    // 3일 주기(3번째 칸), 6일 주기(6번째 칸), 완공(7번째 칸)에 감성적 후광 효과 바인딩
+    if (isActive && !isWithered && (i === 2 || i === 5 || i === 6)) {
+      cell.classList.add("milestone-glow");
+    }
+
+    grid.appendChild(cell);
+  }
+  
+  // 상단 헤더 텍스트 변경을 통한 심리적 압박 완화 코드
+  document.getElementById("streak-txt").innerText = isWithered
+    ? "잠시 잔디가 시든 상태예요 💧"
+    : `연속 수확 ${state.streak}회차`;
+  document.getElementById("val-land-home").innerText = `관리 중인 토지 ${state.lands}`;
+}
+
+// 7. 마이페이지 정보 갱신 함수
+function renderMypage() {
+  document.getElementById("val-total").innerText = state.total;
+  document.getElementById("val-land").innerText = state.lands;
+  const list = document.getElementById("history-list");
+  list.innerHTML =
+    state.history
+      .map(
+        (h) => `
+      <div style="background:var(--light-gray); padding:20px; border-radius:20px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; animation: slideUp 0.3s ease-out;">
+          <span style="font-weight:800; font-size:15px;">${h.name}</span>
+          <span style="font-size:12px; color:var(--gray); font-weight:600;">${h.time}</span>
+      </div>
+  `,
+      )
+      .join("") ||
+    '<p style="text-align:center; color:var(--gray); margin-top:40px; font-weight:600;">아직 수확 기록이 없습니다.</p>';
+}
+
+// 8. 알림 설정 토글 동기화 UI 제어 함수
+function renderNotiToggleUI() {
+  const remindToggle = document.getElementById("t-remind");
+  const penaltyToggle = document.getElementById("t-penalty");
+
+  if (state.notiRemind) remindToggle.classList.add("on");
+  else remindToggle.classList.remove("on");
+
+  if (state.notiPenalty) penaltyToggle.classList.add("on");
+  else penaltyToggle.classList.remove("on");
+}
+
+function toggleNoti(type) {
+  const target = type === "remind" ? "notiRemind" : "notiPenalty";
+  state[target] = !state[target];
+  document.getElementById(`t-${type}`).classList.toggle("on");
+  saveState();
+  
+  const statusTxt = state[target] ? "켜졌습니다" : "꺼졌습니다";
+  showToast(`${type === 'remind' ? '수확 리마인더' : '패널티 경고'}가 ${statusTxt}.`);
+}
+
+// 모달 및 토스트 헬퍼 함수
+function openAddModal() { document.getElementById("add-modal").style.display = "flex"; }
+// 본문 입력창 비우기 포함 인터랙션
+function closeAddModal() { 
+  document.getElementById("add-modal").style.display = "none"; 
+  document.getElementById("habit-input").value = "";
+}
+function openRules() { document.getElementById("rules-modal").style.display = "flex"; }
+function closeRules() { document.getElementById("rules-modal").style.display = "none"; }
+ 
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.innerText = msg;
+  t.style.display = "block";
+  // 중복 타이머 버그 방지 처리가 포함된 2초 노출 후 클로징
+  if(t.timeoutId) clearTimeout(t.timeoutId);
+  t.timeoutId = setTimeout(() => (t.style.display = "none"), 2500);
+}
+
+// 최초 구동 및 상태 동기화 검사 실행
+checkSystem();
